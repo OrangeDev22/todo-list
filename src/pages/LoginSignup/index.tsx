@@ -37,6 +37,8 @@ function LoginSignup() {
 }
 
 const LoginForm = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   return (
     <form
       action=""
@@ -47,11 +49,23 @@ const LoginForm = () => {
     >
       <div>
         <label htmlFor="email">Email</label>
-        <InputField id="email" />
+        <InputField
+          id="email"
+          value={email}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setEmail(e.target.value)
+          }
+        />
       </div>
       <div>
         <label htmlFor="password">password</label>
-        <InputField id="password" />
+        <InputField
+          value={password}
+          id="password"
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setPassword(e.target.value)
+          }
+        />
       </div>
       <Button $fluid>Login</Button>
     </form>
@@ -59,6 +73,10 @@ const LoginForm = () => {
 };
 
 const SignupForm = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+
   return (
     <form
       action=""
@@ -69,15 +87,33 @@ const SignupForm = () => {
     >
       <div>
         <label htmlFor="email">Email</label>
-        <InputField id="email" />
+        <InputField
+          id="email"
+          value={email}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setEmail(e.target.value)
+          }
+        />
       </div>
       <div>
         <label htmlFor="username">Username</label>
-        <InputField id="username" />
+        <InputField
+          id="username"
+          value={username}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setUsername(e.target.value)
+          }
+        />
       </div>
       <div>
         <label htmlFor="password">password</label>
-        <InputField id="password" />
+        <InputField
+          value={password}
+          id="password"
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setPassword(e.target.value)
+          }
+        />
       </div>
       <Button $fluid>Continue</Button>
     </form>
