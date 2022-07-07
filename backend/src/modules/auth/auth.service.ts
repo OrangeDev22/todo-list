@@ -21,7 +21,8 @@ export class AuthService {
         data: { email: dto.email, hash, username: dto.username },
       });
       delete user.hash;
-      return user;
+      const { access_token } = await this.signToken(user.id, user.email);
+      return { ...user, token: access_token };
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
@@ -35,13 +36,13 @@ export class AuthService {
     const user = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
-    console.log('--user', user);
     if (!user) throw new ForbiddenException('Crendentials Incorrect');
     const pwMatches = await argon.verify(user.hash, dto.password);
     if (!pwMatches) {
       throw new ForbiddenException('Crendentials Incorrect');
     }
-    return this.signToken(user.id, user.email);
+    const { access_token } = await this.signToken(user.id, user.email);
+    return { ...user, token: access_token };
   }
 
   async signToken(userId: number, email: string) {
