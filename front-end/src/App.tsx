@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { bindActionCreators } from "redux";
 import "./App.css";
+import DashBoard from "./pages/DashBoard";
 import LoginSignup from "./pages/LoginSignup";
 import { actionCreators, State } from "./state";
 
@@ -16,20 +17,20 @@ function App() {
     const userLocalStorage = JSON.parse(
       localStorage.getItem("account") || "{}"
     );
-    if (userLocalStorage) {
+    if (userLocalStorage.email) {
       setUser(userLocalStorage);
     }
     setLoading(false);
   }, []);
 
   if (loading) return <div>Loading...</div>;
-
+  console.log("--user", user);
   return (
     <div className="flex flex-col min-h-full">
       {/* For Testing only */}
       <main className="flex-grow flex flex-col">
-        {user && <div>{user.username}</div>}
-        <LoginSignup />
+        {/* {user ? <div>{user.username}</div> : <LoginSignup />} */}
+        <DashBoard />
       </main>
     </div>
   );
