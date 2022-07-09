@@ -20,8 +20,8 @@ export class TaskController {
   }
 
   @Post('set_tasks')
-  setTasks(@Body() dto: UpdateTasksDto) {
-    return this.taskService.setTasks(dto);
+  setTasks(@Body() dto: UpdateTasksDto, @GetUser() user: User) {
+    return this.taskService.setTasks(dto, user);
   }
 
   @Get('get_group_tasks')

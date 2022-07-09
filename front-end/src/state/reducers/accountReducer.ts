@@ -16,6 +16,7 @@ const reducer = (state: Account | null = initialState, action: Action) => {
       localStorage.setItem("account", JSON.stringify(action.payload));
       return action.payload;
     case ActionType.LOGOUT:
+      localStorage.removeItem("account");
       return null;
     default:
       return state;

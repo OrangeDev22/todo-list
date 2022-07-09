@@ -24,11 +24,11 @@ export class TaskService {
     }
   }
 
-  async setTasks(dto: UpdateTasksDto) {
+  async setTasks(dto: UpdateTasksDto, user: User) {
     const { tasks, taskGroupId } = dto;
     try {
-      const taskGroup = await this.prisma.taskGroup.update({
-        where: { id: taskGroupId },
+      const taskGroup = await this.prisma.taskGroup.updateMany({
+        where: { AND: [{ id: taskGroupId }, { userId: user.id }] },
         data: { tasks },
       });
       return taskGroup;

@@ -4,7 +4,6 @@ import {
   ColumnItem,
   ColumnsType,
   defaultColumns as dummyColumns,
-  dummyItems,
 } from "../../default-data";
 import cc from "classcat";
 import withContainer from "../../hoc/withContainer";
@@ -12,14 +11,13 @@ import InputField from "../../Components/InputField";
 import axios from "../../axios";
 import { useSelector } from "react-redux";
 import { State } from "../../state";
-import { columnsToArray } from "../../utils/columnsToArray";
 import { arrayToColumns } from "../../utils/arrayToColumns";
 import Button from "../../Components/Button";
 
 const onDragEnd = async (
   result: any,
   columns: ColumnsType,
-  setColumns: any,
+  setColumns: React.Dispatch<React.SetStateAction<ColumnsType>>,
   token: string
 ) => {
   if (!result.destination) return;
@@ -70,7 +68,6 @@ const onDragEnd = async (
       taskGroupId: +source.droppableId,
       tasks: copiedItems,
     };
-    console.log("--body", body);
     await axios.post("task/set_tasks", body, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -90,7 +87,9 @@ function DashBoard() {
   };
 
   const createDefaultTasks = async () => {
-    const defaultColumns = columnsToArray(dummyColumns);
+    const defaultColumns = Object.entries(dummyColumns).map(
+      ([columnId, column]) => column
+    );
     let newColumns = {};
     for (let index = 0; index < defaultColumns.length; index++) {
       const { name } = defaultColumns[index];
@@ -322,4 +321,7 @@ const TaskCard = ({
   );
 };
 
-export default withContainer(DashBoard, { leftAndRight: false });
+export default withContainer(DashBoard, {
+  leftAndRight: false,
+  topAndBottom: true,
+});
