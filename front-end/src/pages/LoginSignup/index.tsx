@@ -32,6 +32,7 @@ function LoginSignup() {
             <span
               className="text-cyan-500 cursor-pointer"
               onClick={() => setScreen("signup")}
+              data-testid="set-signup-screen"
             >
               Register
             </span>
@@ -42,6 +43,7 @@ function LoginSignup() {
             <span
               className="text-cyan-500 cursor-pointer"
               onClick={() => setScreen("login")}
+              data-testid="set-signin-screen"
             >
               Login Here
             </span>

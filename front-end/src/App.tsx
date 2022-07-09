@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { bindActionCreators } from "redux";
 import "./App.css";
 import Header from "./Components/Header";
-import DashBoard from "./pages/DashBoard";
+import HomePage from "./pages/Homepage";
 import LoginSignup from "./pages/LoginSignup";
 import { actionCreators, State } from "./state";
 
@@ -30,7 +30,7 @@ function App() {
     <div className="flex flex-col min-h-full">
       <Header />
       <main className="flex-grow flex flex-col">
-        {user ? <DashBoard /> : <LoginSignup />}
+        {user ? <HomePage /> : <LoginSignup />}
       </main>
     </div>
   );

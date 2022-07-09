@@ -1,6 +1,6 @@
 import { v4 as uuid } from "uuid";
 
-export const dummyItems = [
+export const dummyTasks = [
   { id: uuid(), content: "First task" },
   { id: uuid(), content: "Second task" },
   { id: uuid(), content: "Third task" },
@@ -8,10 +8,10 @@ export const dummyItems = [
   { id: uuid(), content: "Fifth task" },
 ];
 
-export const defaultColumns: ColumnsType = {
+export const defaultGroupsTask: TaskGroupType = {
   [uuid()]: {
     name: "Requested",
-    items: dummyItems,
+    items: dummyTasks,
   },
   [uuid()]: {
     name: "To do",
@@ -27,14 +27,14 @@ export const defaultColumns: ColumnsType = {
   },
 };
 
-export interface ColumnItem {
+export interface Task {
   id: string;
   content: string;
 }
 
-export interface ColumnsType {
+export interface TaskGroupType {
   [x: string]: {
     name: string;
-    items: ColumnItem[];
+    items: Task[];
   };
 }

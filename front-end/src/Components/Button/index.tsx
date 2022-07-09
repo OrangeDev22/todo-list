@@ -35,7 +35,6 @@ const Button = ({ $size, $fluid, $inverted, ...props }: Props) => {
 };
 
 Button.defaultProps = {
-  $type: "primary",
   $size: "md",
 };
 

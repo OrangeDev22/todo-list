@@ -1,44 +1,38 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import {
-  ColumnItem,
-  ColumnsType,
-  defaultColumns as dummyColumns,
-} from "../../default-data";
+import { Task, TaskGroupType } from "../../default-data";
 import cc from "classcat";
-import withContainer from "../../hoc/withContainer";
 import InputField from "../../Components/InputField";
 import axios from "../../axios";
 import { useSelector } from "react-redux";
 import { State } from "../../state";
-import { arrayToColumns } from "../../utils/arrayToColumns";
 import Button from "../../Components/Button";
 
 const onDragEnd = async (
   result: any,
-  columns: ColumnsType,
-  setColumns: React.Dispatch<React.SetStateAction<ColumnsType>>,
+  groupTasks: TaskGroupType,
+  setGroupTasks: React.Dispatch<React.SetStateAction<TaskGroupType>>,
   token: string
 ) => {
   if (!result.destination) return;
   const { source, destination } = result;
 
   if (source.droppableId !== destination.droppableId) {
-    const sourceColumn = columns[source.droppableId];
-    const destColumn = columns[destination.droppableId];
-    const sourceItems = [...sourceColumn.items];
-    const destItems = [...destColumn.items];
+    const sourceGroup = groupTasks[source.droppableId];
+    const destGroup = groupTasks[destination.droppableId];
+    const sourceItems = [...sourceGroup.items];
+    const destItems = [...destGroup.items];
     const [removed] = sourceItems.splice(source.index, 1);
     destItems.splice(destination.index, 0, removed);
 
-    setColumns({
-      ...columns,
+    setGroupTasks({
+      ...groupTasks,
       [source.droppableId]: {
-        ...sourceColumn,
+        ...sourceGroup,
         items: sourceItems,
       },
       [destination.droppableId]: {
-        ...destColumn,
+        ...destGroup,
         items: destItems,
       },
     });
@@ -53,14 +47,14 @@ const onDragEnd = async (
       { headers: { Authorization: `Bearer ${token}` } }
     );
   } else {
-    const column = columns[source.droppableId];
-    const copiedItems = [...column.items];
+    const group = groupTasks[source.droppableId];
+    const copiedItems = [...group.items];
     const [removed] = copiedItems.splice(source.index, 1);
     copiedItems.splice(destination.index, 0, removed);
-    setColumns({
-      ...columns,
+    setGroupTasks({
+      ...groupTasks,
       [source.droppableId]: {
-        ...column,
+        ...group,
         items: copiedItems,
       },
     });
@@ -76,82 +70,29 @@ const onDragEnd = async (
   }
 };
 
-function DashBoard() {
-  const [columns, setColumns] = useState<ColumnsType>({});
-  const [loading, setLoading] = useState(true);
-  const [creatingDefaultData, setCreatingDefaultData] = useState(false);
-  const [selectedColumn, setSelectedColumn] = useState<string | null>(null);
+type Props = {
+  initialTaskGroups: TaskGroupType;
+};
+
+function DashBoard({ initialTaskGroups }: Props) {
+  const [groupTasks, setGroupTasks] =
+    useState<TaskGroupType>(initialTaskGroups);
+  const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const user = useSelector((state: State) => state.user);
-  const header = {
-    Authorization: `Bearer ${user?.token}`,
-  };
-
-  const createDefaultTasks = async () => {
-    const defaultColumns = Object.entries(dummyColumns).map(
-      ([columnId, column]) => column
-    );
-    let newColumns = {};
-    for (let index = 0; index < defaultColumns.length; index++) {
-      const { name } = defaultColumns[index];
-      await axios
-        .post(
-          "task/task_group",
-          { name, userId: user?.id },
-          { headers: header }
-        )
-        .then((response) => {
-          const newColumn = response.data;
-          newColumns = {
-            ...newColumns,
-            [newColumn.id]: { name: newColumn.name, items: newColumn.tasks },
-          };
-        });
-    }
-    setColumns(newColumns);
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      await axios
-        .get("/task/get_group_tasks", {
-          headers: header,
-        })
-        .then((response) => {
-          if (response.data.length === 0) {
-            setCreatingDefaultData(true);
-            createDefaultTasks();
-          } else {
-            setColumns(arrayToColumns(response.data));
-            setLoading(false);
-          }
-        });
-    };
-    fetchData();
-  }, []);
-
-  if (loading) {
-    return (
-      <>
-        <div>Loading...</div>
-        {creatingDefaultData && <div>Creating Dashboard...</div>}
-      </>
-    );
-  }
 
   return (
     <div className="flex h-full">
       <DragDropContext
         onDragEnd={(result) =>
-          onDragEnd(result, columns, setColumns, user?.token || "")
+          onDragEnd(result, groupTasks, setGroupTasks, user?.token || "")
         }
       >
-        {Object.entries(columns).map(([columnId, column], index) => {
+        {Object.entries(groupTasks).map(([groupId, group], index) => {
           return (
-            <div key={columnId}>
-              <h2>{column.name}</h2>
+            <div key={groupId}>
+              <h2>{group.name}</h2>
               <div className="m-2 bg-neutral-300 rounded-md overflow-hidden flex flex-col">
-                <Droppable droppableId={columnId} key={columnId}>
+                <Droppable droppableId={groupId} key={groupId}>
                   {(provided, snapshot) => {
                     return (
                       <div
@@ -162,7 +103,7 @@ function DashBoard() {
                         {...provided.droppableProps}
                         ref={provided.innerRef}
                       >
-                        {column.items.map((item, index) => {
+                        {group.items.map((item, index) => {
                           return (
                             <Draggable
                               key={item.id}
@@ -195,30 +136,30 @@ function DashBoard() {
                     );
                   }}
                 </Droppable>
-                {selectedColumn && selectedColumn === columnId && (
+                {selectedGroup && selectedGroup === groupId && (
                   <NewTaskCard
-                    columnId={columnId}
+                    groupId={groupId}
                     onCancel={() => {
-                      setSelectedColumn(null);
+                      setSelectedGroup(null);
                     }}
-                    onSubmitCompleted={(newTask, columnId) => {
-                      setColumns((prev) => {
-                        let columnsCopy = prev;
-                        columnsCopy[columnId].items = [
-                          ...columnsCopy[columnId].items,
+                    onSubmitCompleted={(newTask, groupId) => {
+                      setGroupTasks((prev) => {
+                        let groupCopy = prev;
+                        groupCopy[groupId].items = [
+                          ...groupCopy[groupId].items,
                           newTask,
                         ];
-                        return columnsCopy;
+                        return groupCopy;
                       });
-                      setSelectedColumn(null);
+                      setSelectedGroup(null);
                     }}
-                    tasks={column.items}
+                    tasks={group.items}
                   />
                 )}
-                {!selectedColumn && (
+                {!selectedGroup && (
                   <button
                     className="text-neutral-700 w-full hover:bg-neutral-400"
-                    onClick={() => setSelectedColumn(columnId)}
+                    onClick={() => setSelectedGroup(groupId)}
                   >
                     <span className="font-bold mr-2">+</span>Add a Task
                   </button>
@@ -233,15 +174,15 @@ function DashBoard() {
 }
 
 const NewTaskCard = ({
-  columnId,
+  groupId,
   onCancel,
   onSubmitCompleted,
   tasks,
 }: {
-  columnId: number | string;
+  groupId: number | string;
   onCancel: () => void;
-  onSubmitCompleted: (newTasks: ColumnItem, columnId: number) => void;
-  tasks: ColumnItem[];
+  onSubmitCompleted: (newTasks: Task, groupId: number) => void;
+  tasks: Task[];
 }) => {
   const user = useSelector((state: State) => state.user);
   const [content, setContent] = useState("");
@@ -256,7 +197,7 @@ const NewTaskCard = ({
         setSubmitting(true);
         const newTask = { content, id: Date.now().toString() };
         const body = {
-          taskGroupId: +columnId,
+          taskGroupId: +groupId,
           tasks: [...tasks, newTask],
         };
         axios
@@ -269,7 +210,7 @@ const NewTaskCard = ({
             response.data &&
               onSubmitCompleted(
                 { id: newTask.id, content: newTask.content },
-                +columnId
+                +groupId
               );
           });
         setSubmitting(false);
@@ -282,7 +223,7 @@ const NewTaskCard = ({
             setContent(e.target.value)
           }
           className="text-xs"
-          placeHolder="PLease Type the content of the task"
+          placeholder="PLease Type the content of the task"
         />
       </div>
       <div className="w-full flex">
@@ -321,7 +262,4 @@ const TaskCard = ({
   );
 };
 
-export default withContainer(DashBoard, {
-  leftAndRight: false,
-  topAndBottom: true,
-});
+export default DashBoard;
