@@ -24,13 +24,12 @@ function App() {
   }, []);
 
   if (loading) return <div>Loading...</div>;
-  console.log("--user", user);
+
   return (
     <div className="flex flex-col min-h-full">
       {/* For Testing only */}
       <main className="flex-grow flex flex-col">
-        {/* {user ? <div>{user.username}</div> : <LoginSignup />} */}
-        <DashBoard />
+        {user ? <DashBoard /> : <LoginSignup />}
       </main>
     </div>
   );

@@ -28,16 +28,15 @@ model TaskGroup{
   updatedAt DateTime @updatedAt
   userId Int
   user   User @relation(fields: [userId], references: [id])
-  tasks Task[]
+  tasks Json?
   @@map("task_groups")
 }
 
-model Task {
-  id        Int      @id @default(autoincrement())
-  name String
-  description String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  taskId Int
-  user   TaskGroup @relation(fields: [taskId], references: [id])
-}
+// model Task {
+//   id        Int      @id @default(autoincrement())
+//   content String
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+//   taskGroupId Int
+//   taskGroup   TaskGroup @relation(fields: [taskGroupId], references: [id])
+// }

@@ -76,8 +76,8 @@ const LoginForm = ({ submitting, setSubmitting }: CommmonTypes) => {
             password,
           })
           .then((response) => {
-            const { email, username, token } = response.data;
-            setUser({ email, username, token });
+            const { id, email, username, token } = response.data;
+            setUser({ id, email, username, token });
             setResponseError("");
           })
           .catch((e) => {
@@ -142,8 +142,8 @@ const SignupForm = ({
             username,
           })
           .then((response) => {
-            const { email, username, token } = response.data;
-            setUser({ email, username, token });
+            const { id, email, username, token } = response.data;
+            setUser({ id, email, username, token });
             onSignupComplete();
           })
           .catch((e) => {

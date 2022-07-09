@@ -16,7 +16,7 @@ type Props = {
 
 const Button = ({ $size, $fluid, $inverted, ...props }: Props) => {
   const className = cc([
-    "inline-block rounded-sm text-center bg-cyan-500 text-white active:bg-opacity-90",
+    "inline-block rounded-md text-center bg-cyan-500 text-white active:bg-opacity-90",
     {
       // $size
       "px-3 py-2 text-md": $size === "md",

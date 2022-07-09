@@ -8,7 +8,7 @@ export const dummyItems = [
   { id: uuid(), content: "Fifth task" },
 ];
 
-export const defaultColumns = {
+export const defaultColumns: ColumnsType = {
   [uuid()]: {
     name: "Requested",
     items: dummyItems,

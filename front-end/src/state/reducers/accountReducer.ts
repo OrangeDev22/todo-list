@@ -2,6 +2,7 @@ import { ActionType } from "../action-types";
 import { Action } from "../actions";
 
 export interface Account {
+  id: number;
   email: string;
   username: string;
   token: string;

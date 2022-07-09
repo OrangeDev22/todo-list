@@ -3,6 +3,7 @@ import React, {
   forwardRef,
   InputHTMLAttributes,
 } from "react";
+import cc from "classcat";
 
 type Props =
   | {
@@ -19,9 +20,10 @@ const InputField = forwardRef<any, any>(
         <input
           data-testid={`input-${nativeAttrs.name || nativeAttrs.id}`}
           {...(nativeAttrs as any)}
-          className={
-            "w-full outline-none rounded-md border py-2 px-3 text-md bg-neutral-800 placeholder-gray-600 border-gray-600`"
-          }
+          className={cc([
+            "w-full outline-none rounded-md border py-2 px-3  bg-neutral-800 placeholder-gray-600 border-gray-600",
+            nativeAttrs.className,
+          ])}
           ref={ref}
         />
       </div>

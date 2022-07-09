@@ -1,10 +1,27 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import { ColumnsType, defaultColumns, dummyItems } from "../../default-data";
-// import uuid from "uuid/v4";
+import {
+  ColumnItem,
+  ColumnsType,
+  defaultColumns as dummyColumns,
+  dummyItems,
+} from "../../default-data";
+import cc from "classcat";
+import withContainer from "../../hoc/withContainer";
+import InputField from "../../Components/InputField";
+import axios from "../../axios";
+import { useSelector } from "react-redux";
+import { State } from "../../state";
+import { columnsToArray } from "../../utils/columnsToArray";
+import { arrayToColumns } from "../../utils/arrayToColumns";
+import Button from "../../Components/Button";
 
-const onDragEnd = (result: any, columns: ColumnsType, setColumns: any) => {
-  console.log("--hola");
+const onDragEnd = async (
+  result: any,
+  columns: ColumnsType,
+  setColumns: any,
+  token: string
+) => {
   if (!result.destination) return;
   const { source, destination } = result;
 
@@ -15,6 +32,7 @@ const onDragEnd = (result: any, columns: ColumnsType, setColumns: any) => {
     const destItems = [...destColumn.items];
     const [removed] = sourceItems.splice(source.index, 1);
     destItems.splice(destination.index, 0, removed);
+
     setColumns({
       ...columns,
       [source.droppableId]: {
@@ -26,6 +44,16 @@ const onDragEnd = (result: any, columns: ColumnsType, setColumns: any) => {
         items: destItems,
       },
     });
+    await axios.post(
+      "task/update_task_group",
+      {
+        sourceId: +source.droppableId,
+        destinationId: +destination.droppableId,
+        newTasksSource: sourceItems,
+        newTasksDestionation: destItems,
+      },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
   } else {
     const column = columns[source.droppableId];
     const copiedItems = [...column.items];
@@ -38,36 +66,102 @@ const onDragEnd = (result: any, columns: ColumnsType, setColumns: any) => {
         items: copiedItems,
       },
     });
+    const body = {
+      taskGroupId: +source.droppableId,
+      tasks: copiedItems,
+    };
+    console.log("--body", body);
+    await axios.post("task/set_tasks", body, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
   }
 };
 
 function DashBoard() {
-  const [columns, setColumns] = useState(defaultColumns);
-  console.log("--colums", columns);
+  const [columns, setColumns] = useState<ColumnsType>({});
+  const [loading, setLoading] = useState(true);
+  const [creatingDefaultData, setCreatingDefaultData] = useState(false);
+  const [selectedColumn, setSelectedColumn] = useState<string | null>(null);
+  const user = useSelector((state: State) => state.user);
+  const header = {
+    Authorization: `Bearer ${user?.token}`,
+  };
+
+  const createDefaultTasks = async () => {
+    const defaultColumns = columnsToArray(dummyColumns);
+    let newColumns = {};
+    for (let index = 0; index < defaultColumns.length; index++) {
+      const { name } = defaultColumns[index];
+      await axios
+        .post(
+          "task/task_group",
+          { name, userId: user?.id },
+          { headers: header }
+        )
+        .then((response) => {
+          const newColumn = response.data;
+          newColumns = {
+            ...newColumns,
+            [newColumn.id]: { name: newColumn.name, items: newColumn.tasks },
+          };
+        });
+    }
+    setColumns(newColumns);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await axios
+        .get("/task/get_group_tasks", {
+          headers: header,
+        })
+        .then((response) => {
+          if (response.data.length === 0) {
+            setCreatingDefaultData(true);
+            createDefaultTasks();
+          } else {
+            setColumns(arrayToColumns(response.data));
+            setLoading(false);
+          }
+        });
+    };
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <>
+        <div>Loading...</div>
+        {creatingDefaultData && <div>Creating Dashboard...</div>}
+      </>
+    );
+  }
+
   return (
     <div className="flex h-full">
       <DragDropContext
-        onDragEnd={(result) => onDragEnd(result, columns, setColumns)}
+        onDragEnd={(result) =>
+          onDragEnd(result, columns, setColumns, user?.token || "")
+        }
       >
         {Object.entries(columns).map(([columnId, column], index) => {
           return (
             <div key={columnId}>
               <h2>{column.name}</h2>
-              <div style={{ margin: 8 }}>
+              <div className="m-2 bg-neutral-300 rounded-md overflow-hidden flex flex-col">
                 <Droppable droppableId={columnId} key={columnId}>
                   {(provided, snapshot) => {
                     return (
                       <div
+                        className={cc([
+                          "p-1 w-64 min-h-32",
+                          { "bg-sky-200": snapshot.isDraggingOver },
+                        ])}
                         {...provided.droppableProps}
                         ref={provided.innerRef}
-                        style={{
-                          background: snapshot.isDraggingOver
-                            ? "lightblue"
-                            : "lightgrey",
-                          padding: 4,
-                          width: 250,
-                          minHeight: 500,
-                        }}
                       >
                         {column.items.map((item, index) => {
                           return (
@@ -83,18 +177,14 @@ function DashBoard() {
                                     {...provided.draggableProps}
                                     {...provided.dragHandleProps}
                                     style={{
-                                      userSelect: "none",
-                                      padding: 16,
-                                      margin: "0 0 8px 0",
-                                      minHeight: "50px",
-                                      backgroundColor: snapshot.isDragging
-                                        ? "#263B4A"
-                                        : "#456C86",
-                                      color: "white",
                                       ...provided.draggableProps.style,
                                     }}
                                   >
-                                    {item.content}
+                                    <TaskCard
+                                      id={item.id}
+                                      content={item.content}
+                                      isDragging={snapshot.isDragging}
+                                    />
                                   </div>
                                 );
                               }}
@@ -106,6 +196,34 @@ function DashBoard() {
                     );
                   }}
                 </Droppable>
+                {selectedColumn && selectedColumn === columnId && (
+                  <NewTaskCard
+                    columnId={columnId}
+                    onCancel={() => {
+                      setSelectedColumn(null);
+                    }}
+                    onSubmitCompleted={(newTask, columnId) => {
+                      setColumns((prev) => {
+                        let columnsCopy = prev;
+                        columnsCopy[columnId].items = [
+                          ...columnsCopy[columnId].items,
+                          newTask,
+                        ];
+                        return columnsCopy;
+                      });
+                      setSelectedColumn(null);
+                    }}
+                    tasks={column.items}
+                  />
+                )}
+                {!selectedColumn && (
+                  <button
+                    className="text-neutral-700 w-full hover:bg-neutral-400"
+                    onClick={() => setSelectedColumn(columnId)}
+                  >
+                    <span className="font-bold mr-2">+</span>Add a Task
+                  </button>
+                )}
               </div>
             </div>
           );
@@ -115,4 +233,93 @@ function DashBoard() {
   );
 }
 
-export default DashBoard;
+const NewTaskCard = ({
+  columnId,
+  onCancel,
+  onSubmitCompleted,
+  tasks,
+}: {
+  columnId: number | string;
+  onCancel: () => void;
+  onSubmitCompleted: (newTasks: ColumnItem, columnId: number) => void;
+  tasks: ColumnItem[];
+}) => {
+  const user = useSelector((state: State) => state.user);
+  const [content, setContent] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  return (
+    <form
+      className="m-1 space-y-2"
+      onSubmit={(e) => {
+        console.log("in submit");
+        e.preventDefault();
+        setSubmitting(true);
+        const newTask = { content, id: Date.now().toString() };
+        const body = {
+          taskGroupId: +columnId,
+          tasks: [...tasks, newTask],
+        };
+        axios
+          .post("task/set_tasks", body, {
+            headers: {
+              Authorization: `Bearer ${user?.token}`,
+            },
+          })
+          .then((response) => {
+            response.data &&
+              onSubmitCompleted(
+                { id: newTask.id, content: newTask.content },
+                +columnId
+              );
+          });
+        setSubmitting(false);
+      }}
+    >
+      <div className="p-4 min-h-14 shadow-lg rounded-lg bg-sky-500">
+        <InputField
+          value={content}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setContent(e.target.value)
+          }
+          className="text-xs"
+          placeHolder="PLease Type the content of the task"
+        />
+      </div>
+      <div className="w-full flex">
+        <Button>{submitting ? "Loading..." : "Add Task"}</Button>
+        <button
+          className="font-bold ml-auto p-3 text-neutral-600"
+          onClick={() => onCancel()}
+          type="button"
+        >
+          X
+        </button>
+      </div>
+    </form>
+  );
+};
+
+const TaskCard = ({
+  id,
+  content,
+  isDragging,
+}: {
+  id: string | number;
+  content: string;
+  isDragging: boolean;
+}) => {
+  return (
+    <div
+      className={cc([
+        "mb-2 p-4 min-h-14 shadow-lg rounded-lg break-words",
+        { "bg-sky-700": isDragging },
+        { "bg-sky-500": !isDragging },
+      ])}
+    >
+      {content}
+    </div>
+  );
+};
+
+export default withContainer(DashBoard, { leftAndRight: false });

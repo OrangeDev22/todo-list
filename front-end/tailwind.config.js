@@ -2,7 +2,12 @@
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      minHeight: {
+        14: "3.5rem",
+        32: "31rem",
+      },
+    },
   },
   plugins: [],
 };
