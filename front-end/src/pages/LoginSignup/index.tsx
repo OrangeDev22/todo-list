@@ -114,7 +114,9 @@ const LoginForm = ({ submitting, setSubmitting }: CommmonTypes) => {
       </div>
       {responseError && <div className="text-red-600">{responseError}</div>}
 
-      <Button $fluid>{submitting ? "Loading..." : "Login"}</Button>
+      <Button $fluid data-testid="button-sigin">
+        {submitting ? "Loading..." : "Login"}
+      </Button>
     </form>
   );
 };
@@ -190,7 +192,9 @@ const SignupForm = ({
         />
       </div>
       {responseError && <div className="text-red-600">{responseError}</div>}
-      <Button $fluid>{submitting ? "Loading..." : "Continue"}</Button>
+      <Button $fluid data-testid="button-signup">
+        {submitting ? "Loading..." : "Continue"}
+      </Button>
     </form>
   );
 };

@@ -7,68 +7,10 @@ import axios from "../../axios";
 import { useSelector } from "react-redux";
 import { State } from "../../state";
 import Button from "../../Components/Button";
-
-const onDragEnd = async (
-  result: any,
-  groupTasks: TaskGroupType,
-  setGroupTasks: React.Dispatch<React.SetStateAction<TaskGroupType>>,
-  token: string
-) => {
-  if (!result.destination) return;
-  const { source, destination } = result;
-
-  if (source.droppableId !== destination.droppableId) {
-    const sourceGroup = groupTasks[source.droppableId];
-    const destGroup = groupTasks[destination.droppableId];
-    const sourceItems = [...sourceGroup.items];
-    const destItems = [...destGroup.items];
-    const [removed] = sourceItems.splice(source.index, 1);
-    destItems.splice(destination.index, 0, removed);
-
-    setGroupTasks({
-      ...groupTasks,
-      [source.droppableId]: {
-        ...sourceGroup,
-        items: sourceItems,
-      },
-      [destination.droppableId]: {
-        ...destGroup,
-        items: destItems,
-      },
-    });
-    await axios.post(
-      "task/update_task_group",
-      {
-        sourceId: +source.droppableId,
-        destinationId: +destination.droppableId,
-        newTasksSource: sourceItems,
-        newTasksDestionation: destItems,
-      },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-  } else {
-    const group = groupTasks[source.droppableId];
-    const copiedItems = [...group.items];
-    const [removed] = copiedItems.splice(source.index, 1);
-    copiedItems.splice(destination.index, 0, removed);
-    setGroupTasks({
-      ...groupTasks,
-      [source.droppableId]: {
-        ...group,
-        items: copiedItems,
-      },
-    });
-    const body = {
-      taskGroupId: +source.droppableId,
-      tasks: copiedItems,
-    };
-    await axios.post("task/set_tasks", body, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  }
-};
+import {
+  orderMultipleGroupsTasks,
+  orderSingleGroupTasks,
+} from "../../utils/orderTasks";
 
 type Props = {
   initialTaskGroups: TaskGroupType;
@@ -79,15 +21,58 @@ function DashBoard({ initialTaskGroups }: Props) {
     useState<TaskGroupType>(initialTaskGroups);
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const user = useSelector((state: State) => state.user);
+  const onDragEnd = async (
+    result: any,
+    groupTasks: TaskGroupType,
+    setGroupTasks: React.Dispatch<React.SetStateAction<TaskGroupType>>,
+    token: string
+  ) => {
+    if (!result.destination) return;
+    const { source, destination } = result;
 
+    if (source.droppableId !== destination.droppableId) {
+      const orderedGroups = orderMultipleGroupsTasks(
+        source,
+        destination,
+        groupTasks
+      );
+      setGroupTasks(orderedGroups.result);
+      await axios.post(
+        "task/update_task_group",
+        {
+          sourceId: +source.droppableId,
+          destinationId: +destination.droppableId,
+          newTasksSource: orderedGroups.sourceTasks,
+          newTasksDestionation: orderedGroups.destTasks,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+    } else {
+      const orderedGroups = orderSingleGroupTasks(
+        source,
+        destination,
+        groupTasks
+      );
+      setGroupTasks(orderedGroups.result);
+      const body = {
+        taskGroupId: +source.droppableId,
+        tasks: orderedGroups.copiedTasks,
+      };
+      await axios.post("task/set_tasks", body, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    }
+  };
   return (
-    <div className="flex h-full">
+    <div className="flex h-full" data-testid="root-container">
       <DragDropContext
         onDragEnd={(result) =>
           onDragEnd(result, groupTasks, setGroupTasks, user?.token || "")
         }
       >
-        {Object.entries(groupTasks).map(([groupId, group], index) => {
+        {Object.entries(groupTasks).map(([groupId, group]) => {
           return (
             <div key={groupId}>
               <h2>{group.name}</h2>
@@ -102,12 +87,13 @@ function DashBoard({ initialTaskGroups }: Props) {
                         ])}
                         {...provided.droppableProps}
                         ref={provided.innerRef}
+                        data-testid={`group-task-${groupId}`}
                       >
-                        {group.items.map((item, index) => {
+                        {group.tasks.map((task, index) => {
                           return (
                             <Draggable
-                              key={item.id}
-                              draggableId={item.id}
+                              key={task.id}
+                              draggableId={task.id}
                               index={index}
                             >
                               {(provided, snapshot) => {
@@ -119,10 +105,11 @@ function DashBoard({ initialTaskGroups }: Props) {
                                     style={{
                                       ...provided.draggableProps.style,
                                     }}
+                                    data-testid={`task-${task.id}`}
                                   >
                                     <TaskCard
-                                      id={item.id}
-                                      content={item.content}
+                                      id={task.id}
+                                      content={task.content}
                                       isDragging={snapshot.isDragging}
                                     />
                                   </div>
@@ -145,15 +132,15 @@ function DashBoard({ initialTaskGroups }: Props) {
                     onSubmitCompleted={(newTask, groupId) => {
                       setGroupTasks((prev) => {
                         let groupCopy = prev;
-                        groupCopy[groupId].items = [
-                          ...groupCopy[groupId].items,
+                        groupCopy[groupId].tasks = [
+                          ...groupCopy[groupId].tasks,
                           newTask,
                         ];
                         return groupCopy;
                       });
                       setSelectedGroup(null);
                     }}
-                    tasks={group.items}
+                    tasks={group.tasks}
                   />
                 )}
                 {!selectedGroup && (

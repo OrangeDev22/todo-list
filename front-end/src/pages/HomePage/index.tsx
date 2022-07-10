@@ -35,7 +35,7 @@ function HomePage() {
             ...newTaskGroups,
             [newGroupTask.id]: {
               name: newGroupTask.name,
-              items: newGroupTask.tasks,
+              tasks: newGroupTask.tasks,
             },
           };
         });

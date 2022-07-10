@@ -1,29 +1,24 @@
-import { v4 as uuid } from "uuid";
-
-export const dummyTasks = [
-  { id: uuid(), content: "First task" },
-  { id: uuid(), content: "Second task" },
-  { id: uuid(), content: "Third task" },
-  { id: uuid(), content: "Fourth task" },
-  { id: uuid(), content: "Fifth task" },
+const dummyTasks = [
+  { id: "5", content: "First task" },
+  { id: "6", content: "Second task" },
+  { id: "7", content: "Third task" },
+  { id: "8", content: "Fourth task" },
+  { id: "9", content: "Fifth task" },
 ];
 
 export const defaultGroupsTask: TaskGroupType = {
-  [uuid()]: {
-    name: "Requested",
-    items: dummyTasks,
-  },
-  [uuid()]: {
+  ["1"]: {
     name: "To do",
-    items: [],
+    tasks: dummyTasks,
   },
-  [uuid()]: {
+
+  ["2"]: {
     name: "In Progress",
-    items: [],
+    tasks: [],
   },
-  [uuid()]: {
+  ["3"]: {
     name: "Done",
-    items: [],
+    tasks: [],
   },
 };
 
@@ -35,6 +30,6 @@ export interface Task {
 export interface TaskGroupType {
   [x: string]: {
     name: string;
-    items: Task[];
+    tasks: Task[];
   };
 }

@@ -1,24 +1,18 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import LoginSignup from "../pages/LoginSignup";
-import * as ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import { store } from "../state/index";
 
 describe("Login and Signup forms test", () => {
-  let container: HTMLDivElement;
+  let container: HTMLElement;
   beforeEach(() => {
     container = document.createElement("div");
     document.body.appendChild(container);
-    ReactDOM.render(
+    container = render(
       <Provider store={store}>
         <LoginSignup />
-      </Provider>,
-      container
-    );
-  });
-  afterEach(() => {
-    document.body.removeChild(container);
-    container.remove();
+      </Provider>
+    ).container;
   });
 
   it("Renders Login form correctly", () => {
@@ -27,6 +21,7 @@ describe("Login and Signup forms test", () => {
     expect(inputs[0].id).toBe("email");
     expect(inputs[1].id).toBe("password");
     expect(screen.getByTestId("set-signup-screen")).toBeInTheDocument();
+    expect(screen.getByTestId("button-sigin")).toBeInTheDocument();
   });
 
   it("renders Signup form correctly", () => {
@@ -38,6 +33,7 @@ describe("Login and Signup forms test", () => {
     expect(inputs[1].id).toBe("username");
     expect(inputs[2].id).toBe("password");
     expect(screen.getByTestId("set-signin-screen")).toBeInTheDocument();
+    expect(screen.getByTestId("button-signup")).toBeInTheDocument();
   });
 
   it("Switches between login and signup screens", () => {

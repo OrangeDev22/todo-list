@@ -7,6 +7,9 @@ module.exports = {
         14: "3.5rem",
         32: "31rem",
       },
+      minWidth: {
+        3: "0.75rem",
+      },
     },
   },
   plugins: [],
