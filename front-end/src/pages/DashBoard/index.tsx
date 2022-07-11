@@ -11,6 +11,7 @@ import {
   orderMultipleGroupsTasks,
   orderSingleGroupTasks,
 } from "../../utils/orderTasks";
+import Container from "../../Components/Container";
 
 type Props = {
   initialTaskGroups: TaskGroupType;
@@ -66,97 +67,102 @@ function DashBoard({ initialTaskGroups }: Props) {
     }
   };
   return (
-    <div className="flex h-full" data-testid="root-container">
-      <DragDropContext
-        onDragEnd={(result) =>
-          onDragEnd(result, groupTasks, setGroupTasks, user?.token || "")
-        }
+    <Container topAndBottom>
+      <div
+        className="flex h-full w-full overflow-x-auto min-h-44 py-5"
+        data-testid="root-container"
       >
-        {Object.entries(groupTasks).map(([groupId, group]) => {
-          return (
-            <div key={groupId}>
-              <h2>{group.name}</h2>
-              <div className="m-2 bg-neutral-300 rounded-md overflow-hidden flex flex-col">
-                <Droppable droppableId={groupId} key={groupId}>
-                  {(provided, snapshot) => {
-                    return (
-                      <div
-                        className={cc([
-                          "p-1 w-64 min-h-32",
-                          { "bg-sky-200": snapshot.isDraggingOver },
-                        ])}
-                        {...provided.droppableProps}
-                        ref={provided.innerRef}
-                        data-testid={`group-task-${groupId}`}
-                      >
-                        {group.tasks.map((task, index) => {
-                          return (
-                            <Draggable
-                              key={task.id}
-                              draggableId={task.id}
-                              index={index}
-                            >
-                              {(provided, snapshot) => {
-                                return (
-                                  <div
-                                    ref={provided.innerRef}
-                                    {...provided.draggableProps}
-                                    {...provided.dragHandleProps}
-                                    style={{
-                                      ...provided.draggableProps.style,
-                                    }}
-                                    data-testid={`task-${task.id}`}
-                                  >
-                                    <TaskCard
-                                      id={task.id}
-                                      content={task.content}
-                                      isDragging={snapshot.isDragging}
-                                    />
-                                  </div>
-                                );
-                              }}
-                            </Draggable>
-                          );
-                        })}
-                        {provided.placeholder}
-                      </div>
-                    );
-                  }}
-                </Droppable>
-                {selectedGroup && selectedGroup === groupId && (
-                  <NewTaskCard
-                    groupId={groupId}
-                    onCancel={() => {
-                      setSelectedGroup(null);
+        <DragDropContext
+          onDragEnd={(result) =>
+            onDragEnd(result, groupTasks, setGroupTasks, user?.token || "")
+          }
+        >
+          {Object.entries(groupTasks).map(([groupId, group]) => {
+            return (
+              <div key={groupId}>
+                <h2>{group.name}</h2>
+                <div className="m-2 bg-neutral-300 rounded-md overflow-hidden flex flex-col">
+                  <Droppable droppableId={groupId} key={groupId}>
+                    {(provided, snapshot) => {
+                      return (
+                        <div
+                          className={cc([
+                            "p-1 w-64 min-h-32",
+                            { "bg-sky-200": snapshot.isDraggingOver },
+                          ])}
+                          {...provided.droppableProps}
+                          ref={provided.innerRef}
+                          data-testid={`group-task-${groupId}`}
+                        >
+                          {group.tasks.map((task, index) => {
+                            return (
+                              <Draggable
+                                key={task.id}
+                                draggableId={task.id}
+                                index={index}
+                              >
+                                {(provided, snapshot) => {
+                                  return (
+                                    <div
+                                      ref={provided.innerRef}
+                                      {...provided.draggableProps}
+                                      {...provided.dragHandleProps}
+                                      style={{
+                                        ...provided.draggableProps.style,
+                                      }}
+                                      data-testid={`task-${task.id}`}
+                                    >
+                                      <TaskCard
+                                        id={task.id}
+                                        content={task.content}
+                                        isDragging={snapshot.isDragging}
+                                      />
+                                    </div>
+                                  );
+                                }}
+                              </Draggable>
+                            );
+                          })}
+                          {provided.placeholder}
+                        </div>
+                      );
                     }}
-                    onSubmitCompleted={(newTask, groupId) => {
-                      setGroupTasks((prev) => {
-                        let groupCopy = prev;
-                        groupCopy[groupId].tasks = [
-                          ...groupCopy[groupId].tasks,
-                          newTask,
-                        ];
-                        return groupCopy;
-                      });
-                      setSelectedGroup(null);
-                    }}
-                    tasks={group.tasks}
-                  />
-                )}
-                {!selectedGroup && (
-                  <button
-                    className="text-neutral-700 w-full hover:bg-neutral-400"
-                    onClick={() => setSelectedGroup(groupId)}
-                  >
-                    <span className="font-bold mr-2">+</span>Add a Task
-                  </button>
-                )}
+                  </Droppable>
+                  {selectedGroup && selectedGroup === groupId && (
+                    <NewTaskCard
+                      groupId={groupId}
+                      onCancel={() => {
+                        setSelectedGroup(null);
+                      }}
+                      onSubmitCompleted={(newTask, groupId) => {
+                        setGroupTasks((prev) => {
+                          let groupCopy = prev;
+                          groupCopy[groupId].tasks = [
+                            ...groupCopy[groupId].tasks,
+                            newTask,
+                          ];
+                          return groupCopy;
+                        });
+                        setSelectedGroup(null);
+                      }}
+                      tasks={group.tasks}
+                    />
+                  )}
+                  {!selectedGroup && (
+                    <button
+                      className="text-neutral-700 w-full hover:bg-neutral-400"
+                      onClick={() => setSelectedGroup(groupId)}
+                    >
+                      <span className="font-bold mr-2">+</span>Add a Task
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </DragDropContext>
-    </div>
+            );
+          })}
+        </DragDropContext>
+      </div>
+    </Container>
   );
 }
 

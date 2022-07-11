@@ -11,7 +11,7 @@ import {
 
 @Injectable()
 export class TaskService {
-  constructor(private prisma: PrismaService, private jwt: JwtService) {}
+  constructor(private prisma: PrismaService) {}
   async createTaskGroup(dto: TaskGroupDto) {
     const { name, userId } = dto;
     try {
