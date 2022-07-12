@@ -18,7 +18,7 @@ function HomePage() {
 
   const createDefaultTasks = async () => {
     const deafaultGroupsArray = Object.entries(defaultGroupsTask).map(
-      ([groupId, group]) => group
+      ([, group]) => group
     );
     let newTaskGroups = {};
     for (let index = 0; index < deafaultGroupsArray.length; index++) {

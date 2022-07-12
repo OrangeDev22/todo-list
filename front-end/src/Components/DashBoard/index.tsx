@@ -71,7 +71,7 @@ function DashBoard({ initialTaskGroups }: Props) {
   return (
     <Container topAndBottom>
       <div
-        className="flex h-full w-full overflow-x-auto min-h-44 py-5"
+        className="flex h-full w-full overflow-x-auto min-h-44 py-5 md:justify-center"
         data-testid="root-container"
       >
         <DragDropContext
