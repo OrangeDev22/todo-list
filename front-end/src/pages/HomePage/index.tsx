@@ -3,11 +3,11 @@ import { useSelector } from "react-redux";
 import { defaultGroupsTask, TaskGroupType } from "../../default-data";
 import withContainer from "../../hoc/withContainer";
 import { State } from "../../state";
-import DashBoard from "../DashBoard";
+import DashBoard from "../../Components/DashBoard";
 import axios from "../../axios";
 import { arrayToObject } from "../../utils/arrayToObject";
 
-function Homepage() {
+function HomePage() {
   const [tasksGroupFromDb, setTaskGroupFromDb] = useState<TaskGroupType>({});
   const [loading, setLoading] = useState(true);
   const [creatingDefaultData, setCreatingDefaultData] = useState(false);
@@ -79,4 +79,4 @@ function Homepage() {
   );
 }
 
-export default withContainer(Homepage);
+export default withContainer(HomePage);

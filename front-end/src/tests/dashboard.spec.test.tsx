@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import DashBoard from "../pages/DashBoard";
+import DashBoard from "../Components/DashBoard";
 import { Provider } from "react-redux";
 import { store } from "../state/index";
 import { defaultGroupsTask } from "../default-data";

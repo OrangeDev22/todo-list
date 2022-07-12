@@ -5,7 +5,7 @@ import { bindActionCreators } from "redux";
 import "./App.css";
 import Header from "./Components/Header/index";
 import LoginSignup from "./pages/LoginSignup/index";
-import Homepage from "./pages/Homepage/index";
+import Homepage from "./pages/HomePage/index";
 import { actionCreators, State } from "./state";
 
 function App() {

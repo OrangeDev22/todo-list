@@ -2,16 +2,16 @@ import React, { useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { Task, TaskGroupType } from "../../default-data";
 import cc from "classcat";
-import InputField from "../../Components/InputField/index";
+import InputField from "../InputField/index";
 import axios from "../../axios";
 import { useSelector } from "react-redux";
 import { State } from "../../state";
-import Button from "../../Components/Button/index";
+import Button from "../Button/index";
 import {
   orderMultipleGroupsTasks,
   orderSingleGroupTasks,
 } from "../../utils/orderTasks";
-import Container from "../../Components/Container/index";
+import Container from "../Container/index";
 import { ReactComponent as DeleteIcon } from "../../assets/icons/delete.svg";
 
 type Props = {
