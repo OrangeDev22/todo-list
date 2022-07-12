@@ -21,3 +21,50 @@ npm start
 ```
 
 You can also try the live [live demo](https://todo-list-orange.netlify.app/) here
+
+# Tree Structure
+
+```sh
+├───backend
+│   ├───prisma
+│   │   └───migrations
+│   │       ├───20220704203037_init
+│   │       ├───20220704214416_update_schemas
+│   │       ├───20220708151001_update_tasks_schema
+│   │       ├───20220708175806_updateing_schemas
+│   │       └───20220708195317_json_tasks_field
+│   ├───src
+│   │   └───modules
+│   │       ├───auth
+│   │       │   ├───decorator
+│   │       │   ├───dto
+│   │       │   ├───guard
+│   │       │   └───strategy
+│   │       ├───prisma
+│   │       ├───task
+│   │       │   └───dto
+│   │       └───user
+│   └───test
+└───front-end
+    ├───public
+    └───src
+        ├───assets
+        │   └───icons
+        ├───Components
+        │   ├───Button
+        │   ├───Container
+        │   ├───DashBoard
+        │   ├───Header
+        │   └───InputField
+        ├───hoc
+        ├───pages
+        │   ├───HomePage
+        │   └───LoginSignup
+        ├───state
+        │   ├───action-creators
+        │   ├───action-types
+        │   ├───actions
+        │   └───reducers
+        ├───tests
+        └───utils
+```
