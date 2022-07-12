@@ -4,8 +4,8 @@ import { useDispatch } from "react-redux";
 import { bindActionCreators } from "redux";
 import "./App.css";
 import Header from "./Components/Header/index";
-import HomePage from "./pages/Homepage/index";
 import LoginSignup from "./pages/LoginSignup/index";
+import HomePage from "./pages/Homepage/index";
 import { actionCreators, State } from "./state";
 
 function App() {

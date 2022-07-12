@@ -7,7 +7,7 @@ import DashBoard from "../DashBoard";
 import axios from "../../axios";
 import { arrayToObject } from "../../utils/arrayToObject";
 
-function HomePage() {
+function Homepage() {
   const [tasksGroupFromDb, setTaskGroupFromDb] = useState<TaskGroupType>({});
   const [loading, setLoading] = useState(true);
   const [creatingDefaultData, setCreatingDefaultData] = useState(false);
@@ -79,4 +79,4 @@ function HomePage() {
   );
 }
 
-export default withContainer(HomePage);
+export default withContainer(Homepage);
