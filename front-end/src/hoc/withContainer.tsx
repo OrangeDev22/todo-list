@@ -1,5 +1,5 @@
 import { FC } from "react";
-import Container from "../Components/Container";
+import Container from "../Components/Container/index";
 
 type Options = {
   leftAndRight?: boolean;

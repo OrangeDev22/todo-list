@@ -1,8 +1,8 @@
 import axios from "../../axios";
 import React, { useState } from "react";
-import Button from "../../Components/Button";
-import Container from "../../Components/Container";
-import InputField from "../../Components/InputField";
+import Button from "../../Components/Button/index";
+import Container from "../../Components/Container/index";
+import InputField from "../../Components/InputField/index";
 import withContainer from "../../hoc/withContainer";
 import { bindActionCreators } from "redux";
 import { actionCreators } from "../../state";
