@@ -12,6 +12,7 @@ import {
   orderSingleGroupTasks,
 } from "../../utils/orderTasks";
 import Container from "../../Components/Container";
+import { ReactComponent as DeleteIcon } from "../../assets/icons/delete.svg";
 
 type Props = {
   initialTaskGroups: TaskGroupType;
@@ -21,6 +22,7 @@ function DashBoard({ initialTaskGroups }: Props) {
   const [groupTasks, setGroupTasks] =
     useState<TaskGroupType>(initialTaskGroups);
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
+  const [taskToDelete, setTaskToDelete] = useState("");
   const user = useSelector((state: State) => state.user);
   const onDragEnd = async (
     result: any,
@@ -81,7 +83,7 @@ function DashBoard({ initialTaskGroups }: Props) {
             return (
               <div key={groupId}>
                 <h2>{group.name}</h2>
-                <div className="m-2 bg-neutral-300 rounded-md overflow-hidden flex flex-col">
+                <div className="m-2 bg-neutral-300 rounded-md overflow-hidden flex flex-col p-2">
                   <Droppable droppableId={groupId} key={groupId}>
                     {(provided, snapshot) => {
                       return (
@@ -113,9 +115,34 @@ function DashBoard({ initialTaskGroups }: Props) {
                                       data-testid={`task-${task.id}`}
                                     >
                                       <TaskCard
-                                        id={task.id}
                                         content={task.content}
                                         isDragging={snapshot.isDragging}
+                                        onDeletePressed={async () => {
+                                          let newTasks = group.tasks.filter(
+                                            (taskToDelete) =>
+                                              taskToDelete.id !== task.id
+                                          );
+
+                                          const body = {
+                                            taskGroupId: +groupId,
+                                            tasks: newTasks,
+                                          };
+                                          await axios
+                                            .post("task/set_tasks", body, {
+                                              headers: {
+                                                Authorization: `Bearer ${user?.token}`,
+                                              },
+                                            })
+                                            .then(() => {
+                                              setGroupTasks((prev) => {
+                                                let copyGroup = prev;
+                                                copyGroup[groupId].tasks =
+                                                  newTasks;
+                                                return copyGroup;
+                                              });
+                                              setTaskToDelete(task.id);
+                                            });
+                                        }}
                                       />
                                     </div>
                                   );
@@ -184,16 +211,14 @@ const NewTaskCard = ({
   return (
     <form
       className="m-1 space-y-2"
-      onSubmit={(e) => {
-        console.log("in submit");
+      onSubmit={async (e) => {
         e.preventDefault();
-        setSubmitting(true);
         const newTask = { content, id: Date.now().toString() };
         const body = {
           taskGroupId: +groupId,
           tasks: [...tasks, newTask],
         };
-        axios
+        await axios
           .post("task/set_tasks", body, {
             headers: {
               Authorization: `Bearer ${user?.token}`,
@@ -205,8 +230,8 @@ const NewTaskCard = ({
                 { id: newTask.id, content: newTask.content },
                 +groupId
               );
+            setSubmitting(false);
           });
-        setSubmitting(false);
       }}
     >
       <div className="p-4 min-h-14 shadow-lg rounded-lg bg-sky-500">
@@ -220,7 +245,9 @@ const NewTaskCard = ({
         />
       </div>
       <div className="w-full flex">
-        <Button>{submitting ? "Loading..." : "Add Task"}</Button>
+        <Button onClick={() => setSubmitting(true)}>
+          {submitting ? "Loading..." : "Add Task"}
+        </Button>
         <button
           className="font-bold ml-auto p-3 text-neutral-600"
           onClick={() => onCancel()}
@@ -234,23 +261,34 @@ const NewTaskCard = ({
 };
 
 const TaskCard = ({
-  id,
   content,
   isDragging,
+  onDeletePressed,
 }: {
-  id: string | number;
   content: string;
   isDragging: boolean;
+  onDeletePressed: () => void;
 }) => {
+  const [showDeleteIcon, setShowDeleteIcon] = useState(false);
   return (
     <div
       className={cc([
-        "mb-2 p-4 min-h-14 shadow-lg rounded-lg break-words",
+        "mb-2 p-4 min-h-14 shadow-lg rounded-lg break-words relative",
         { "bg-sky-700": isDragging },
         { "bg-sky-500": !isDragging },
       ])}
+      onMouseEnter={() => setShowDeleteIcon(true)}
+      onMouseLeave={() => setShowDeleteIcon(false)}
     >
-      {content}
+      {showDeleteIcon && (
+        <div
+          onClick={() => onDeletePressed()}
+          className="bg-white absolute rounded-full -top-1.5 -left-1.5 cursor-pointer"
+        >
+          <DeleteIcon width={24} className="fill-red-600" />
+        </div>
+      )}
+      <div> {content}</div>
     </div>
   );
 };

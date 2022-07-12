@@ -12,7 +12,7 @@ function Header() {
 
   return (
     <header className="p-4 bg-sky-500 flex">
-      <div className="font-bold">{user?.username}</div>
+      <div className="font-bold">{user?.username || "Todo List"}</div>
       {user && (
         <div className="flex items*center ml-auto gap-3">
           <button onClick={() => logout()}>Log out</button>
