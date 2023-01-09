@@ -1,6 +1,14 @@
 # How Run Locally
 
-Make sure you have npm and docker installed in your computer. Open a terminal and navigate to the "backend" folder then run the following commamnds
+Make sure you have npm and docker installed in your computer. Open a terminal and navigate to the "backend" folder and open the ".env" file and uncomment these two lines.
+
+```sh
+#Uncomment these two lines for local run 
+# DATABASE_URL="postgresql://postgres:123@localhost:5434/todos?schema=public"
+# JWT_SECRET="suuper-secret"
+```
+
+Then run the following commamnds
 
 ```sh
 npm install
