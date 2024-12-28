@@ -83,7 +83,7 @@ const LoginForm = ({ submitting, setSubmitting }: CommmonTypes) => {
             setResponseError("");
           })
           .catch((e) => {
-            setResponseError(e.response.data.message);
+            setResponseError(e.response.data?.message);
             setSubmitting(false);
           });
       }}
@@ -152,7 +152,7 @@ const SignupForm = ({
           })
           .catch((e) => {
             setSubmitting(false);
-            setResponseError(e.response.data.message);
+            setResponseError(e.response.data?.message);
           });
       }}
       className="space-y-7"
