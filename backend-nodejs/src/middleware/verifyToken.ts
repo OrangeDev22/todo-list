@@ -9,7 +9,7 @@ const verifyTokenMiddleware = (
   next: NextFunction
 ): void => {
   const token = req.header("Authorization")?.split(" ")[1];
-  console.log("--token", token);
+
   if (!token) {
     res.status(403).json({ msg: "No token provided" });
     return;

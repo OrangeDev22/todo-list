@@ -2,11 +2,21 @@ import express, { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 import errorHandler from "./middleware/errorHandler";
 import routes from "./config/routes";
+import cors from "cors";
 
 dotenv.config();
 const PORT = process.env.PORT;
 
 const app = express();
+
+const corsOptions = {
+  origin: process.env.FRONT_END_ORIGIN,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 // Body parser middleware
 app.use(express.json());

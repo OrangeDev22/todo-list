@@ -69,17 +69,20 @@ export const siginController = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    const { email, password } = req.body;
+    const { email, password } = req.query;
 
     const user = await prisma.user.findUnique({
-      where: { email },
+      where: { email: email as string },
     });
 
     if (!user) {
       return res.status(404).json({ success: false, msg: "Invalid email" });
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user?.password);
+    const isPasswordValid = await bcrypt.compare(
+      password as string,
+      user?.password
+    );
 
     if (!isPasswordValid) {
       return res.status(404).json({ success: false, msg: "Invalid password" });

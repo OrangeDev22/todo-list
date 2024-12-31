@@ -73,9 +73,8 @@ const LoginForm = ({ submitting, setSubmitting }: CommmonTypes) => {
         e.preventDefault();
         setSubmitting(true);
         await axios
-          .post("/auth/signin", {
-            email,
-            password,
+          .get("/auth/signin", {
+            params: { email, password },
           })
           .then((response) => {
             const { id, email, username, token } = response.data;
