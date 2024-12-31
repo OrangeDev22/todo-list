@@ -6,9 +6,5 @@ export const findBoard = async (userId: number, id: number, res: Response) => {
     where: { id: id, AND: { userId } },
   });
 
-  if (!board) {
-    return res.status(404).json({ success: false, msg: "Board doesn't exits" });
-  }
-
   return board;
 };

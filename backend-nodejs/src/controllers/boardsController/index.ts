@@ -63,7 +63,14 @@ export const deleteBoard = async (
         .json({ success: false, msg: "Error: please provide a board id" });
     }
 
-    await findBoard(userId, +id, res);
+    const boardExists = await findBoard(userId, +id, res);
+
+    if (!boardExists) {
+      return res.status(404).json({
+        success: false,
+        msg: `can't find board by id ${id}`,
+      });
+    }
 
     const deleteBoard = await prisma.board.delete({
       where: { id: parseInt(id) },
@@ -92,7 +99,14 @@ export const patchBoard = async (
         .json({ success: false, msg: "Error: please provide a board id" });
     }
 
-    await findBoard(userId, +id, res);
+    const boardExists = await findBoard(userId, +id, res);
+
+    if (!boardExists) {
+      return res.status(404).json({
+        success: false,
+        msg: `can't find board by id ${id}`,
+      });
+    }
 
     if (!name)
       return res
