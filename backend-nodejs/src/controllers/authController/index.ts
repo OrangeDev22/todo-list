@@ -67,7 +67,7 @@ export const siginController = async (
     }
 
     const isPasswordValid = await bcrypt.compare(password, user?.password);
-    console.log("--is valid password", isPasswordValid);
+
     if (!isPasswordValid) {
       return res.status(404).json({ success: false, msg: "Invalid password" });
     }
