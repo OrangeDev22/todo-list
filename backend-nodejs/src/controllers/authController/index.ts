@@ -3,20 +3,24 @@ import bcrypt from "bcrypt";
 import prisma from "../../prisma/prismaClient";
 import { generateToken } from "../../utils/jwtUtils";
 
-export const signup = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<any> => {
+export const signup = async (req: Request, res: Response): Promise<any> => {
   try {
     const { email, password, username } = req.body;
 
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+    const existingUser = await prisma.user.findFirst({
+      where: { OR: [{ email }, { username }] },
+    });
 
-    if (existingUser) {
+    if (existingUser?.email === email) {
       return res
         .status(400)
-        .json({ success: false, msg: "User already exists" });
+        .json({ success: false, msg: "Email already in use" });
+    }
+
+    if (existingUser?.username === username) {
+      return res
+        .status(400)
+        .json({ success: false, msg: "Username already in use" });
     }
 
     // Hash password
@@ -32,9 +36,12 @@ export const signup = async (
       email: newUser.email,
       username: newUser.username,
     };
+
     const accessToken = generateToken(data);
 
-    res.status(201).json({ success: true, user: data, token: accessToken });
+    res
+      .status(201)
+      .json({ success: true, data: { ...data, token: accessToken } });
   } catch (error) {
     console.error("--error", error);
     res.status(500).json({ success: false, msg: "Server error" });
