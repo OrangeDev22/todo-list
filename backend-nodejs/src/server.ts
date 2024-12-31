@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import auth from "./routes/auth";
 import boards from "./routes/boards";
 import errorHandler from "./middleware/errorHandler";
+import verifyTokenMiddleware from "./middleware/verifyToken";
 
 dotenv.config();
 const PORT = process.env.PORT;
@@ -15,7 +16,7 @@ app.use(express.urlencoded({ extended: false }));
 
 // ROUTES
 app.use("/api/auth", auth);
-app.use("/api/boards", boards);
+app.use("/api/boards", verifyTokenMiddleware, boards);
 
 app.get("/", (req, res) => {
   res.json({ msg: "Hello world!" });
