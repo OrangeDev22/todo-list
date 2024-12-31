@@ -1,11 +1,8 @@
 import SiginForm from "../../Components/SiginForm";
+import withAuthContainer from "../../hoc/withAuthContainer";
 
 const SiginPage = () => {
-  return (
-    <div className="w-full p-4 max-w-3xl m-auto">
-      <SiginForm />
-    </div>
-  );
+  return <SiginForm />;
 };
 
-export default SiginPage;
+export default withAuthContainer(SiginForm, { leftAndRight: true });

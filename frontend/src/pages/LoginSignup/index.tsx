@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import Button from "../../Components/Button/index";
 import Container from "../../Components/Container/index";
 import InputField from "../../Components/InputField/index";
-import withContainer from "../../hoc/withContainer";
+import withAuthContainer from "../../hoc/withAuthContainer";
 import { bindActionCreators } from "redux";
 import { actionCreators } from "../../state";
 import { useDispatch } from "react-redux";
@@ -139,4 +139,4 @@ const SignupForm = ({
   );
 };
 
-export default withContainer(LoginSignup, { containerClass: "m-auto" });
+export default withAuthContainer(LoginSignup, { containerClass: "m-auto" });
