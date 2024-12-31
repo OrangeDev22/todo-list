@@ -14,8 +14,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // ROUTES
-app.use("/auth", auth);
-app.use("/boards", boards);
+app.use("/api/auth", auth);
+app.use("/api/boards", boards);
 
 app.get("/", (req, res) => {
   res.json({ msg: "Hello world!" });
