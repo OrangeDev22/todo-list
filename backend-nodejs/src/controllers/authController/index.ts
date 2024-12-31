@@ -3,7 +3,10 @@ import bcrypt from "bcrypt";
 import prisma from "../../prisma/prismaClient";
 import { generateToken } from "../../utils/jwtUtils";
 
-export const signup = async (req: Request, res: Response): Promise<any> => {
+export const signupController = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
   try {
     const { email, password, username } = req.body;
 
@@ -35,6 +38,44 @@ export const signup = async (req: Request, res: Response): Promise<any> => {
       id: newUser.id,
       email: newUser.email,
       username: newUser.username,
+    };
+
+    const accessToken = generateToken(data);
+
+    res
+      .status(201)
+      .json({ success: true, data: { ...data, token: accessToken } });
+  } catch (error) {
+    console.error("--error", error);
+    return res.status(500).json({ success: false, msg: "Server error" });
+  }
+};
+
+export const siginController = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      return res.status(404).json({ success: false, msg: "Invalid email" });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user?.password);
+    console.log("--is valid password", isPasswordValid);
+    if (!isPasswordValid) {
+      return res.status(404).json({ success: false, msg: "Invalid password" });
+    }
+
+    const data = {
+      id: user.id,
+      email: user.email,
+      username: user.username,
     };
 
     const accessToken = generateToken(data);
