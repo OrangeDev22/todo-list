@@ -9,8 +9,14 @@ export const getBoards = async (
 ) => {
   try {
     const { id: userId } = req.user;
+    const { include_tasks } = req.query;
 
-    const boards = await prisma.board.findMany({ where: { userId } });
+    const includeTasks = include_tasks === "true";
+
+    const boards = await prisma.board.findMany({
+      where: { userId },
+      include: { tasks: includeTasks },
+    });
 
     res.status(201).json({ success: true, boards });
   } catch (error) {
