@@ -92,3 +92,30 @@ export const updateTask = async (
     next(new Error());
   }
 };
+
+export const deleteTask = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<any> => {
+  try {
+    const { boardId } = req.body;
+    const { id } = req.params;
+
+    const tasksExists = await findTasks(boardId, +id, res);
+
+    if (!tasksExists)
+      return res
+        .status(404)
+        .json({ success: false, msg: "Task doesn't exits" });
+
+    const deletedTask = await prisma.task.delete({
+      where: { id: +id, AND: { boardId } },
+    });
+
+    res.status(201).json({ success: true, data: { ...deletedTask } });
+  } catch (error) {
+    console.error("--error", error);
+    next(new Error());
+  }
+};
