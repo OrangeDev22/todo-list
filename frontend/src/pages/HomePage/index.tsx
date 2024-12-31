@@ -6,43 +6,48 @@ import { State } from "../../state";
 import DashBoard from "../../Components/DashBoard";
 import axios from "../../axios";
 import { arrayToObject } from "../../utils/arrayToObject";
+import { useNavigate } from "react-router";
 
 function HomePage() {
   const [tasksGroupFromDb, setTaskGroupFromDb] = useState<TaskGroupType>({});
   const [loading, setLoading] = useState(true);
   const [creatingDefaultData, setCreatingDefaultData] = useState(false);
   const user = useSelector((state: State) => state.user);
+  const navigate = useNavigate();
   const header = {
     Authorization: `Bearer ${user?.token}`,
   };
-
-  const createDefaultTasks = async () => {
-    const deafaultGroupsArray = Object.entries(defaultGroupsTask).map(
-      ([, group]) => group
-    );
-    let newTaskGroups = {};
-    for (let index = 0; index < deafaultGroupsArray.length; index++) {
-      const { name } = deafaultGroupsArray[index];
-      await axios
-        .post(
-          "task/task_group",
-          { name, userId: user?.id },
-          { headers: header }
-        )
-        .then((response) => {
-          const newGroupTask = response.data;
-          newTaskGroups = {
-            ...newTaskGroups,
-            [newGroupTask.id]: {
-              name: newGroupTask.name,
-              tasks: newGroupTask.tasks,
-            },
-          };
-        });
-    }
-    setTaskGroupFromDb(newTaskGroups);
-    setLoading(false);
-  };
+  useEffect(() => {
+    console.log("--user", user);
+    if (!user) navigate("/sigin");
+  }, []);
+  // const createDefaultTasks = async () => {
+  //   const deafaultGroupsArray = Object.entries(defaultGroupsTask).map(
+  //     ([, group]) => group
+  //   );
+  //   let newTaskGroups = {};
+  //   for (let index = 0; index < deafaultGroupsArray.length; index++) {
+  //     const { name } = deafaultGroupsArray[index];
+  //     await axios
+  //       .post(
+  //         "task/task_group",
+  //         { name, userId: user?.id },
+  //         { headers: header }
+  //       )
+  //       .then((response) => {
+  //         const newGroupTask = response.data;
+  //         newTaskGroups = {
+  //           ...newTaskGroups,
+  //           [newGroupTask.id]: {
+  //             name: newGroupTask.name,
+  //             tasks: newGroupTask.tasks,
+  //           },
+  //         };
+  //       });
+  //   }
+  //   setTaskGroupFromDb(newTaskGroups);
+  //   setLoading(false);
+  // };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,7 +58,7 @@ function HomePage() {
         .then((response) => {
           if (response.data.length === 0) {
             setCreatingDefaultData(true);
-            createDefaultTasks();
+            // createDefaultTasks();
           } else {
             setTaskGroupFromDb(arrayToObject(response.data));
             setLoading(false);

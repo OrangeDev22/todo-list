@@ -7,6 +7,8 @@ import Header from "./Components/Header/index";
 import LoginSignup from "./pages/LoginSignup/index";
 import Homepage from "./pages/HomePage/index";
 import { actionCreators, State } from "./state";
+import { BrowserRouter, Route, Routes } from "react-router";
+import SiginPage from "./pages/SiginPage";
 
 function App() {
   const dispatch = useDispatch();
@@ -30,7 +32,13 @@ function App() {
     <div className="flex flex-col min-h-full">
       <Header />
       <main className="flex-grow flex flex-col">
-        {user ? <Homepage /> : <LoginSignup />}
+        {/* {user ? <Homepage /> : <LoginSignup />} */}
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Homepage />} />
+            <Route path="/sigin" element={<SiginPage />} />
+          </Routes>
+        </BrowserRouter>
       </main>
     </div>
   );

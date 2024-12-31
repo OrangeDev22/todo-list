@@ -17,8 +17,9 @@ function LoginSignup() {
     <Container>
       <div>
         {screen === "login" ? (
-          <SiginForm submitting={submitting} setSubmitting={setSubmitting} />
+          <></>
         ) : (
+          // <SiginForm submitting={submitting} setSubmitting={setSubmitting} />
           <SignupForm
             submitting={submitting}
             setSubmitting={setSubmitting}

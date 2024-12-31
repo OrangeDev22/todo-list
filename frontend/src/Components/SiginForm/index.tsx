@@ -9,21 +9,17 @@ import { z } from "zod";
 import { loginFormSchema } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-
-type Props = {
-  submitting: boolean;
-  setSubmitting: React.Dispatch<React.SetStateAction<boolean>>;
-};
+import { Link } from "react-router";
 
 type loginFormData = z.infer<typeof loginFormSchema>;
 
-const SiginForm = ({ submitting, setSubmitting }: Props) => {
+const SiginForm = () => {
   const dispatch = useDispatch();
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<loginFormData>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
@@ -37,7 +33,7 @@ const SiginForm = ({ submitting, setSubmitting }: Props) => {
 
   const onSubmit = async (data: loginFormData) => {
     const { email, password } = data;
-    setSubmitting(true);
+
     await axios
       .get("/auth/signin", {
         params: { email, password },
@@ -49,7 +45,6 @@ const SiginForm = ({ submitting, setSubmitting }: Props) => {
       })
       .catch((error) => {
         setResponseError(error.response.data?.msg);
-        setSubmitting(false);
       });
   };
 
@@ -74,8 +69,19 @@ const SiginForm = ({ submitting, setSubmitting }: Props) => {
       {responseError && <div className="text-red-600">{responseError}</div>}
 
       <Button $fluid data-testid="button-sigin">
-        {submitting ? "Loading..." : "Login"}
+        {isSubmitting ? "Loading..." : "Login"}
       </Button>
+
+      <div className="my-2">
+        Need an account?{" "}
+        <Link
+          to="/sigup"
+          className="text-cyan-500 cursor-pointer"
+          data-testid="set-signin-screen"
+        >
+          Register Here
+        </Link>
+      </div>
     </form>
   );
 };
