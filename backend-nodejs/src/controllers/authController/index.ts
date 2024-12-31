@@ -34,6 +34,17 @@ export const signupController = async (
       data: { email, password: hashedPassword, username },
     });
 
+    // Create default user boards
+    const defaultBoards = ["To do", "Doing", "Done"];
+
+    await Promise.all(
+      defaultBoards.map(async (title) => {
+        await prisma.board.create({
+          data: { userId: newUser.id, name: title },
+        });
+      })
+    );
+
     const data = {
       id: newUser.id,
       email: newUser.email,

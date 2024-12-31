@@ -11,30 +11,33 @@ datasource db {
 }
 
 model User {
-  id         Int         @id @default(autoincrement())
-  username   String      @unique
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  email      String      @unique
-  password   String
-  taskGroups TaskGroup[]
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  email     String   @unique
+  password  String
+  boards    Board[]
+  @@map("users")
 }
 
-model TaskGroup {
+model Board {
   id        Int      @id @default(autoincrement())
   name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  userId    Int
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  userId    Int  @map("user_id")
   user      User     @relation(fields: [userId], references: [id])
   tasks     Task[]
+  @@map("boards")
 }
 
 model Task {
-  id          Int       @id @default(autoincrement())
-  content     String
-  taskGroupId Int
-  taskGroup   TaskGroup @relation(fields: [taskGroupId], references: [id])
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id        Int      @id @default(autoincrement())
+  content   String
+  boardId   Int @map("board_id")
+  board     Board    @relation(fields: [boardId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  @@map("tasks")
 }
