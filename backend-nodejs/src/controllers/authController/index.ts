@@ -5,7 +5,8 @@ import { generateToken } from "../../utils/jwtUtils";
 
 export const signupController = async (
   req: Request,
-  res: Response
+  res: Response,
+  next: NextFunction
 ): Promise<any> => {
   try {
     const { email, password, username } = req.body;
@@ -58,13 +59,14 @@ export const signupController = async (
       .json({ success: true, data: { ...data, token: accessToken } });
   } catch (error) {
     console.error("--error", error);
-    return res.status(500).json({ success: false, msg: "Server error" });
+    next(new Error());
   }
 };
 
 export const siginController = async (
   req: Request,
-  res: Response
+  res: Response,
+  next: NextFunction
 ): Promise<any> => {
   try {
     const { email, password } = req.body;
@@ -96,6 +98,6 @@ export const siginController = async (
       .json({ success: true, data: { ...data, token: accessToken } });
   } catch (error) {
     console.error("--error", error);
-    res.status(500).json({ success: false, msg: "Server error" });
+    next(new Error());
   }
 };
