@@ -1,9 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
-import auth from "./routes/auth";
-import boards from "./routes/boards";
 import errorHandler from "./middleware/errorHandler";
-import verifyTokenMiddleware from "./middleware/verifyToken";
+import routes from "./config/routes";
 
 dotenv.config();
 const PORT = process.env.PORT;
@@ -14,9 +12,14 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// ROUTES
-app.use("/api/auth", auth);
-app.use("/api/boards", verifyTokenMiddleware, boards);
+// Register routes dynamically
+routes.forEach(({ path, handler, middleware }) => {
+  if (middleware) {
+    app.use(path, middleware, handler);
+  } else {
+    app.use(path, handler);
+  }
+});
 
 app.get("/", (req, res) => {
   res.json({ msg: "Hello world!" });
