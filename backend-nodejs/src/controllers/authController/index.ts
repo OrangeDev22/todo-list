@@ -77,6 +77,13 @@ export const siginController = async (
   try {
     const { email, password } = req.query;
 
+    if (!email || !password) {
+      return res.status(404).json({
+        success: false,
+        msg: "please provide a valid email or password",
+      });
+    }
+
     const user = await prisma.user.findUnique({
       where: { email: email as string },
     });

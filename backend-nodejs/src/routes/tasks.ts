@@ -4,12 +4,15 @@ import {
   deleteTask,
   getTasks,
   updateTask,
+  updateTasks,
 } from "../controllers/tasksController";
 const router = express.Router();
 
 router.get("/", getTasks);
 
 router.post("/", createTask);
+
+router.patch("/", updateTasks);
 
 router.patch("/:id", updateTask);
 

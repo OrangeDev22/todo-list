@@ -89,7 +89,6 @@ const Boards = () => {
       // Collect affected tasks and update their order
     }
     // Detect tasks with changed order or boardId
-    // const changedTasks = [];
     const currentTasks = flatMap(boards, (board) =>
       board.tasks.map((task) => ({
         id: task.id,

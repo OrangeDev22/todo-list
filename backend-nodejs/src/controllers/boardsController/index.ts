@@ -15,7 +15,7 @@ export const getBoards = async (
 
     const boards = await prisma.board.findMany({
       where: { userId },
-      include: { tasks: includeTasks },
+      include: { tasks: includeTasks ? { orderBy: { order: "asc" } } : false },
     });
 
     res.status(201).json({

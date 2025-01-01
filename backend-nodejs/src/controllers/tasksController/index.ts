@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { findBoard } from "../boardsController/utils";
 import prisma from "../../prisma/prismaClient";
 import { findTasks } from "./utils";
+import { Task } from "@prisma/client";
 
 export const getTasks = async (
   req: Request,
@@ -11,7 +12,10 @@ export const getTasks = async (
   try {
     const { boardId } = req.body;
 
-    const tasks = await prisma.task.findMany({ where: { boardId } });
+    const tasks = await prisma.task.findMany({
+      where: { boardId },
+      orderBy: { order: "asc" },
+    });
 
     res.status(201).json({ success: true, data: { ...tasks } });
   } catch (error) {
@@ -123,6 +127,25 @@ export const deleteTask = async (
     });
 
     res.status(201).json({ success: true, data: { ...deletedTask } });
+  } catch (error) {
+    console.error("--error", error);
+    next(new Error());
+  }
+};
+
+export const updateTasks = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<any> => {
+  try {
+    const { tasks } = req.body;
+
+    const updates = tasks.map((task: Task) => {
+      return prisma.task.update({ where: { id: task.id }, data: { ...task } });
+    });
+    const updatedTasks = await Promise.all(updates);
+    res.status(201).json({ success: true, data: { ...updatedTasks } });
   } catch (error) {
     console.error("--error", error);
     next(new Error());
