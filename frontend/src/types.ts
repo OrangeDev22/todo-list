@@ -2,6 +2,7 @@ export interface Task {
   id: number;
   content: string;
   order: number;
+  boardId: number;
 }
 
 export interface BoardType {

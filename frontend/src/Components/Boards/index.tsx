@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { State } from "../../state";
 import axiosIntance from "../../axios";
@@ -6,21 +6,26 @@ import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import NewTaskCard from "../NewTaskCard";
 import { BoardType, Task } from "../../types";
 import TasksList from "../TasksList";
+import { cloneDeep, differenceWith, flatMap, isEqual } from "lodash";
 
 const Boards = () => {
   const user = useSelector((state: State) => state.user);
   const [boards, setBoards] = useState<BoardType[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedGroup, setSelectedGroup] = useState<number | null>(null);
-  const header = {
-    Authorization: `Bearer ${user?.token}`,
-  };
+
+  const originalBoards = useMemo(() => {
+    return cloneDeep(boards);
+  }, [boards]);
+  // const header = {
+  //   Authorization: `Bearer ${user?.token}`,
+  // };
 
   useEffect(() => {
     const fetchData = async () => {
       await axiosIntance
         .get("/boards?include_tasks=true", {
-          headers: header,
+          // headers: header,
         })
         .then((response) => {
           // setTaskGroupFromDb(arrayToObject(response.data));
@@ -67,6 +72,8 @@ const Boards = () => {
       sourceBoard.tasks.forEach((task, index) => {
         task.order = index;
       });
+
+      // Collect affected tasks and update their order
     } else {
       // Moving between different groups
       destinationBoard.tasks.splice(destination.index, 0, movedTask);
@@ -78,8 +85,31 @@ const Boards = () => {
       destinationBoard.tasks.forEach((task, index) => {
         task.order = index;
       });
-    }
 
+      // Collect affected tasks and update their order
+    }
+    // Detect tasks with changed order or boardId
+    // const changedTasks = [];
+    const currentTasks = flatMap(boards, (board) =>
+      board.tasks.map((task) => ({
+        id: task.id,
+        order: task.order,
+        boardId: board.id,
+      }))
+    );
+
+    const originalTasks = flatMap(originalBoards, (board) =>
+      board.tasks.map((task) => ({
+        id: task.id,
+        order: task.order,
+        boardId: board.id,
+      }))
+    );
+
+    console.log("---current tasks", currentTasks);
+    console.log("--originalTasks", originalTasks);
+    const changedTasks = differenceWith(currentTasks, originalTasks, isEqual);
+    console.log("--changedTasks", changedTasks);
     setBoards([...boards]);
   };
 
@@ -101,7 +131,7 @@ const Boards = () => {
   };
 
   if (loading) return <div>Loading...</div>;
-  console.log("--boards", boards);
+
   return (
     <div className="flex">
       {/* <div>Boards</div> */}

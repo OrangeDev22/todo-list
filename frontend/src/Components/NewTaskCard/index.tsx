@@ -20,7 +20,7 @@ const NewTaskCard = ({
   onSubmitCompleted,
   tasks,
 }: {
-  boardId: number | string;
+  boardId: number;
   onCancel: () => void;
   onSubmitCompleted: (newTasks: Task, boardId: number) => void;
   tasks: Task[];
@@ -38,6 +38,7 @@ const NewTaskCard = ({
           content,
           id: Date.now(),
           order: tasks.length,
+          boardId,
         };
         onSubmitCompleted(newTask, +boardId);
         // const body = {
