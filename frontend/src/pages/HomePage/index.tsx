@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { defaultGroupsTask, TaskGroupType } from "../../default-data";
+import { TaskGroupType } from "../../default-data";
 import withContainer from "../../hoc/withContainer";
 import { State } from "../../state";
 import DashBoard from "../../Components/DashBoard";
 import axios from "../../axios";
-import { arrayToObject } from "../../utils/arrayToObject";
+// import { arrayToObject } from "../../utils/arrayToObject";
 import { useNavigate } from "react-router";
 
 function HomePage() {
-  const [tasksGroupFromDb, setTaskGroupFromDb] = useState<TaskGroupType>({});
+  const [tasksGroupFromDb, setTaskGroupFromDb] = useState<TaskGroupType>();
   const [loading, setLoading] = useState(true);
   const [creatingDefaultData, setCreatingDefaultData] = useState(false);
   const user = useSelector((state: State) => state.user);
@@ -20,7 +20,7 @@ function HomePage() {
   useEffect(() => {
     console.log("--user", user);
     if (!user) navigate("/sigin");
-  }, []);
+  }, [user]);
   // const createDefaultTasks = async () => {
   //   const deafaultGroupsArray = Object.entries(defaultGroupsTask).map(
   //     ([, group]) => group
@@ -52,17 +52,12 @@ function HomePage() {
   useEffect(() => {
     const fetchData = async () => {
       await axios
-        .get("/task/get_group_tasks", {
+        .get("/boards?include_tasks=true", {
           headers: header,
         })
         .then((response) => {
-          if (response.data.length === 0) {
-            setCreatingDefaultData(true);
-            // createDefaultTasks();
-          } else {
-            setTaskGroupFromDb(arrayToObject(response.data));
-            setLoading(false);
-          }
+          // setTaskGroupFromDb(arrayToObject(response.data));
+          setLoading(false);
         });
     };
     fetchData();
@@ -77,11 +72,7 @@ function HomePage() {
     );
   }
 
-  return (
-    <div>
-      <DashBoard initialTaskGroups={tasksGroupFromDb} />
-    </div>
-  );
+  return <div>{/* <DashBoard initialTaskGroups={tasksGroupFromDb} /> */}</div>;
 }
 
 export default withContainer(HomePage);

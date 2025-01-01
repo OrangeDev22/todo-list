@@ -39,8 +39,9 @@ const SiginForm = () => {
         params: { email, password },
       })
       .then((response) => {
-        const { id, email, username, token } = response.data;
-        setUser({ id, email, username, token });
+        const { userData } = response.data;
+        console.log("--response", response);
+        setUser(userData);
         setResponseError("");
         navigate("/");
       })
@@ -65,6 +66,7 @@ const SiginForm = () => {
           {...register("password")}
           isError={!!errors.password}
           errorMessage={errors.password?.message}
+          type="password"
         />
       </div>
       {responseError && <div className="text-red-600">{responseError}</div>}

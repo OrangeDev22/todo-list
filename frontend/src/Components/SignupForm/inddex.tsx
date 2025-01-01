@@ -37,8 +37,8 @@ const SignupForm = () => {
         username,
       })
       .then((response) => {
-        const { id, email, username, token } = response.data;
-        setUser({ id, email, username, token });
+        const { userData } = response.data;
+        setUser(userData);
         navigate("/");
       })
       .catch((e) => {
@@ -70,6 +70,7 @@ const SignupForm = () => {
           {...register("password")}
           isError={!!errors.password}
           errorMessage={errors.password?.message}
+          type="password"
         />
       </div>
 

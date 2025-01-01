@@ -7,10 +7,10 @@ import axios from "../../axios";
 import { useSelector } from "react-redux";
 import { State } from "../../state";
 import Button from "../Button/index";
-import {
-  orderMultipleGroupsTasks,
-  orderSingleGroupTasks,
-} from "../../utils/orderTasks";
+// import {
+//   orderMultipleGroupsTasks,
+//   orderSingleGroupTasks,
+// } from "../../utils/orderTasks";
 import Container from "../Container/index";
 import { ReactComponent as DeleteIcon } from "../../assets/icons/delete.svg";
 
@@ -24,49 +24,49 @@ function DashBoard({ initialTaskGroups }: Props) {
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [taskToDelete, setTaskToDelete] = useState("");
   const user = useSelector((state: State) => state.user);
+
   const onDragEnd = async (
     result: any,
     groupTasks: TaskGroupType,
     setGroupTasks: React.Dispatch<React.SetStateAction<TaskGroupType>>,
     token: string
   ) => {
-    if (!result.destination) return;
-    const { source, destination } = result;
-
-    if (source.droppableId !== destination.droppableId) {
-      const orderedGroups = orderMultipleGroupsTasks(
-        source,
-        destination,
-        groupTasks
-      );
-      setGroupTasks(orderedGroups.result);
-      await axios.post(
-        "task/update_task_group",
-        {
-          sourceId: +source.droppableId,
-          destinationId: +destination.droppableId,
-          newTasksSource: orderedGroups.sourceTasks,
-          newTasksDestionation: orderedGroups.destTasks,
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-    } else {
-      const orderedGroups = orderSingleGroupTasks(
-        source,
-        destination,
-        groupTasks
-      );
-      setGroupTasks(orderedGroups.result);
-      const body = {
-        taskGroupId: +source.droppableId,
-        tasks: orderedGroups.copiedTasks,
-      };
-      await axios.post("task/set_tasks", body, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-    }
+    // if (!result.destination) return;
+    // const { source, destination } = result;
+    // if (source.droppableId !== destination.droppableId) {
+    //   const orderedGroups = orderMultipleGroupsTasks(
+    //     source,
+    //     destination,
+    //     groupTasks
+    //   );
+    //   setGroupTasks(orderedGroups.result);
+    //   await axios.post(
+    //     "task/update_task_group",
+    //     {
+    //       sourceId: +source.droppableId,
+    //       destinationId: +destination.droppableId,
+    //       newTasksSource: orderedGroups.sourceTasks,
+    //       newTasksDestionation: orderedGroups.destTasks,
+    //     },
+    //     { headers: { Authorization: `Bearer ${token}` } }
+    //   );
+    // } else {
+    //   const orderedGroups = orderSingleGroupTasks(
+    //     source,
+    //     destination,
+    //     groupTasks
+    //   );
+    //   setGroupTasks(orderedGroups.result);
+    //   const body = {
+    //     taskGroupId: +source.droppableId,
+    //     tasks: orderedGroups.copiedTasks,
+    //   };
+    //   await axios.post("task/set_tasks", body, {
+    //     headers: {
+    //       Authorization: `Bearer ${token}`,
+    //     },
+    //   });
+    // }
   };
   return (
     <Container topAndBottom>
@@ -74,7 +74,7 @@ function DashBoard({ initialTaskGroups }: Props) {
         className="flex h-full w-full overflow-x-auto min-h-44 py-5 md:justify-center"
         data-testid="root-container"
       >
-        <DragDropContext
+        {/* <DragDropContext
           onDragEnd={(result) =>
             onDragEnd(result, groupTasks, setGroupTasks, user?.token || "")
           }
@@ -187,7 +187,7 @@ function DashBoard({ initialTaskGroups }: Props) {
               </div>
             );
           })}
-        </DragDropContext>
+        </DragDropContext> */}
       </div>
     </Container>
   );

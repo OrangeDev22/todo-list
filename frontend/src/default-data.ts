@@ -6,30 +6,13 @@ const dummyTasks = [
   { id: "9", content: "Fifth task" },
 ];
 
-export const defaultGroupsTask: TaskGroupType = {
-  ["1"]: {
-    name: "To do",
-    tasks: dummyTasks,
-  },
-
-  ["2"]: {
-    name: "In Progress",
-    tasks: [],
-  },
-  ["3"]: {
-    name: "Done",
-    tasks: [],
-  },
-};
-
 export interface Task {
   id: string;
   content: string;
 }
 
 export interface TaskGroupType {
-  [x: string]: {
-    name: string;
-    tasks: Task[];
-  };
+  id: number;
+  name: string;
+  tasks: Task[];
 }
