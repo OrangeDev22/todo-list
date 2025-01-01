@@ -2,16 +2,10 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { State } from "../../state";
 import axiosIntance from "../../axios";
-import {
-  DragDropContext,
-  Draggable,
-  Droppable,
-  DropResult,
-} from "react-beautiful-dnd";
-import cc from "classcat";
-import TaskCard from "../TaskCard";
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import NewTaskCard from "../NewTaskCard";
-import { BoardType } from "../../types";
+import { BoardType, Task } from "../../types";
+import TasksList from "../TasksList";
 
 const Boards = () => {
   const user = useSelector((state: State) => state.user);
@@ -89,6 +83,23 @@ const Boards = () => {
     setBoards([...boards]);
   };
 
+  const addNewTask = (newTask: Task, boardId: number) => {
+    setBoards((prevBoard) =>
+      prevBoard.map((board) =>
+        board.id === boardId
+          ? {
+              ...board,
+              tasks: [
+                ...board.tasks,
+                { ...newTask, order: board.tasks.length },
+              ],
+            }
+          : board
+      )
+    );
+    setSelectedGroup(null);
+  };
+
   if (loading) return <div>Loading...</div>;
   console.log("--boards", boards);
   return (
@@ -101,109 +112,19 @@ const Boards = () => {
               <div className="m-2 bg-neutral-300 rounded-md overflow-hidden flex flex-col p-2">
                 <h2>{board.name}</h2>
 
-                <Droppable
-                  droppableId={board.id.toString()}
-                  key={board.id}
-                  type="ROW"
-                >
-                  {(provided, snapshot) => {
-                    return (
-                      <div
-                        className={cc([
-                          "p-1 w-64 min-h-32",
-                          { "bg-sky-200": snapshot.isDraggingOver },
-                        ])}
-                        {...provided.droppableProps}
-                        ref={provided.innerRef}
-                        data-testid={`group-task-${board.id}`}
-                      >
-                        {board.tasks.map((task, index) => {
-                          return (
-                            <Draggable
-                              key={task.id.toString()}
-                              draggableId={task.id.toString()}
-                              index={task.order}
-                            >
-                              {(provided, snapshot) => {
-                                return (
-                                  <div
-                                    ref={provided.innerRef}
-                                    {...provided.draggableProps}
-                                    {...provided.dragHandleProps}
-                                    style={{
-                                      ...provided.draggableProps.style,
-                                    }}
-                                    data-testid={`task-${task.id}`}
-                                  >
-                                    <TaskCard
-                                      content={task.content}
-                                      isDragging={snapshot.isDragging}
-                                      boardId={board.id}
-                                      taskId={task.id}
-                                      onDeletePressed={async (
-                                        boardId,
-                                        taskId
-                                      ) => {
-                                        const boardIndex = boards.findIndex(
-                                          (board) => board.id === boardId
-                                        );
-
-                                        if (boardIndex === -1) {
-                                          console.error("Board not found");
-                                          return;
-                                        }
-
-                                        const board = boards[boardIndex];
-
-                                        // Find and remove the task
-                                        board.tasks = board.tasks.filter(
-                                          (task) => task.id !== taskId
-                                        );
-
-                                        // Update the order property of remaining tasks
-                                        board.tasks.forEach((task, index) => {
-                                          task.order = index;
-                                        });
-
-                                        // Update state
-                                        setBoards([...boards]);
-                                      }}
-                                    />
-                                  </div>
-                                );
-                              }}
-                            </Draggable>
-                          );
-                        })}
-                        {provided.placeholder}
-                      </div>
-                    );
-                  }}
-                </Droppable>
+                <TasksList
+                  tasks={board.tasks}
+                  originBoardId={board.id}
+                  setBoards={setBoards}
+                  boards={boards}
+                />
                 {selectedGroup && selectedGroup === board.id && (
                   <NewTaskCard
                     boardId={board.id}
                     onCancel={() => {
                       setSelectedGroup(null);
                     }}
-                    onSubmitCompleted={(newTask, boardId) => {
-                      console.log("--new task", newTask);
-                      console.log("--groupid", boardId);
-                      setBoards((prevBoard) =>
-                        prevBoard.map((board) =>
-                          board.id === boardId
-                            ? {
-                                ...board,
-                                tasks: [
-                                  ...board.tasks,
-                                  { ...newTask, order: board.tasks.length },
-                                ],
-                              }
-                            : board
-                        )
-                      );
-                      setSelectedGroup(null);
-                    }}
+                    onSubmitCompleted={addNewTask}
                     tasks={board.tasks}
                   />
                 )}
