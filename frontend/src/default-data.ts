@@ -17,9 +17,3 @@ export interface TaskGroupType {
   name: string;
   tasks: Task[];
 }
-
-export interface BoardType {
-  id: number;
-  name: string;
-  tasks: Task[];
-}

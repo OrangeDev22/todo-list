@@ -30,6 +30,7 @@ model Board {
   userId    Int      @map("user_id")
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   tasks     Task[]
+  order     Int      @default(0)
 
   @@map("boards")
 }

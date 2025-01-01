@@ -26,7 +26,7 @@ export const createTask = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    const { boardId, content } = req.body;
+    const { boardId, content, order } = req.body;
     const { id: userId } = req.user;
 
     const boardExists = await findBoard(userId, +boardId, res);
@@ -38,11 +38,20 @@ export const createTask = async (
       });
     }
 
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        msg: `Order number is required`,
+      });
+    }
+
     if (!content) {
       res.status(404).json({ success: false, msg: "Content can't be empty" });
     }
 
-    const newTask = await prisma.task.create({ data: { content, boardId } });
+    const newTask = await prisma.task.create({
+      data: { content, boardId, order },
+    });
 
     res.status(201).json({ success: true, data: { ...newTask } });
   } catch (error) {

@@ -28,31 +28,40 @@ const NewTaskCard = ({
   const user = useSelector((state: State) => state.user);
   const [content, setContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
-
+  console.log("--new task content", content);
   return (
     <form
       className="m-1 space-y-2"
       onSubmit={async (e) => {
         e.preventDefault();
-        const newTask = { content, id: Date.now().toString() };
-        const body = {
-          taskGroupId: +boardId,
-          tasks: [...tasks, newTask],
+        const newTask = {
+          content,
+          id: Date.now(),
+          order: tasks.length,
         };
-        await axios
-          .post("task/set_tasks", body, {
-            headers: {
-              Authorization: `Bearer ${user?.token}`,
-            },
-          })
-          .then((response) => {
-            response.data &&
-              // onSubmitCompleted(
-              //   { id: newTask.id, content: newTask.content },
-              //   +boardId
-              // );
-              setSubmitting(false);
-          });
+        onSubmitCompleted(newTask, +boardId);
+        // const body = {
+        //   taskGroupId: +boardId,
+        //   tasks: [...tasks, newTask],
+        // };
+        // await axios
+        //   .post("task/set_tasks", body, {
+        //     headers: {
+        //       Authorization: `Bearer ${user?.token}`,
+        //     },
+        //   })
+        //   .then((response) => {
+        //     response.data &&
+        //       onSubmitCompleted(
+        //         {
+        //           id: newTask.id,
+        //           content: newTask.content,
+        //           order: tasks.length,
+        //         },
+        //         +boardId
+        //       );
+        //     setSubmitting(false);
+        //   });
       }}
     >
       <div className="p-4 min-h-14 shadow-lg rounded-lg bg-sky-500">
@@ -61,7 +70,6 @@ const NewTaskCard = ({
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setContent(e.target.value)
           }
-          className="text-xs"
           placeholder="PLease Type the content of the task"
         />
       </div>

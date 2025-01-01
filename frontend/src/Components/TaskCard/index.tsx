@@ -3,13 +3,17 @@ import cc from "classcat";
 import { ReactComponent as DeleteIcon } from "../../assets/icons/delete.svg";
 
 const TaskCard = ({
+  boardId,
+  taskId,
   content,
   isDragging,
   onDeletePressed,
 }: {
+  boardId: number;
+  taskId: number;
   content: string;
   isDragging: boolean;
-  onDeletePressed: () => void;
+  onDeletePressed: (boardId: number, taskId: number) => void;
 }) => {
   const [showDeleteIcon, setShowDeleteIcon] = useState(false);
   return (
@@ -24,7 +28,7 @@ const TaskCard = ({
     >
       {showDeleteIcon && (
         <div
-          onClick={() => onDeletePressed()}
+          onClick={() => onDeletePressed(boardId, taskId)}
           className="bg-white absolute rounded-full -top-1.5 -left-1.5 cursor-pointer"
         >
           <DeleteIcon width={24} className="fill-red-600" />
