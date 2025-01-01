@@ -5,4 +5,4 @@ const SiginPage = () => {
   return <SiginForm />;
 };
 
-export default withAuthContainer(SiginForm, { leftAndRight: true });
+export default withAuthContainer(SiginPage, { leftAndRight: true });

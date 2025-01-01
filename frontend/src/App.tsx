@@ -9,6 +9,7 @@ import Homepage from "./pages/HomePage/index";
 import { actionCreators, State } from "./state";
 import { BrowserRouter, Route, Routes } from "react-router";
 import SiginPage from "./pages/SiginPage";
+import SignupPage from "./pages/SignupPage";
 
 function App() {
   const dispatch = useDispatch();
@@ -37,6 +38,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Homepage />} />
             <Route path="/sigin" element={<SiginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
           </Routes>
         </BrowserRouter>
       </main>

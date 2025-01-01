@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const loginFormSchema = z.object({
+export const signupFormSchema = z.object({
   email: z
     .string()
     .email({ message: "Invalid email address" })
@@ -9,4 +9,5 @@ export const loginFormSchema = z.object({
     .string()
     .min(8, { message: "Password must be at least 8 characters long" })
     .nonempty({ message: "Password is requried" }),
+  username: z.string().min(1, { message: "Username is required" }),
 });
