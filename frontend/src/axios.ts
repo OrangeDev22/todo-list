@@ -1,8 +1,10 @@
 import axios from "axios";
+import { useSelector } from "react-redux";
+import { State } from "./state";
 
-const instance = axios.create({
+const axiosInstance = axios.create({
   baseURL: process.env.REACT_APP_API_BASE_URL,
   withCredentials: true,
 });
 
-export default instance;
+export default axiosInstance;

@@ -3,6 +3,8 @@ import bcrypt from "bcrypt";
 import prisma from "../../prisma/prismaClient";
 import { generateToken } from "../../utils/jwtUtils";
 
+const TOKEN_MAX_LIFE = 24 * 60 * 60 * 1000;
+
 export const signupController = async (
   req: Request,
   res: Response,
@@ -53,10 +55,14 @@ export const signupController = async (
     };
 
     const accessToken = generateToken(data);
+    res.cookie("access_token", accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: TOKEN_MAX_LIFE,
+      sameSite: "strict",
+    });
 
-    res
-      .status(201)
-      .json({ success: true, data: { ...data, token: accessToken } });
+    res.status(201).json({ success: true, userData: { ...data } });
   } catch (error) {
     console.error("--error", error);
     next(new Error());
@@ -96,9 +102,14 @@ export const siginController = async (
 
     const accessToken = generateToken(data);
 
-    res
-      .status(201)
-      .json({ success: true, data: { ...data, token: accessToken } });
+    res.cookie("access_token", accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: TOKEN_MAX_LIFE,
+      sameSite: "strict",
+    });
+
+    res.status(201).json({ success: true, userData: { ...data } });
   } catch (error) {
     console.error("--error", error);
     next(new Error());

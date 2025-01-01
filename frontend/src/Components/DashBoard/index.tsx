@@ -226,11 +226,11 @@ const NewTaskCard = ({
           })
           .then((response) => {
             response.data &&
-              onSubmitCompleted(
-                { id: newTask.id, content: newTask.content },
-                +groupId
-              );
-            setSubmitting(false);
+              // onSubmitCompleted(
+              //   { id: newTask.id, content: newTask.content },
+              //   +groupId
+              // );
+              setSubmitting(false);
           });
       }}
     >

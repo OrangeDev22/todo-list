@@ -18,7 +18,14 @@ export const getBoards = async (
       include: { tasks: includeTasks },
     });
 
-    res.status(201).json({ success: true, boards });
+    res.status(201).json({
+      success: true,
+      boards: boards.map(({ id, name, tasks }) => ({
+        id,
+        name,
+        tasks,
+      })),
+    });
   } catch (error) {
     console.error("--error", error);
     next(new Error());

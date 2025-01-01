@@ -8,7 +8,9 @@ const verifyTokenMiddleware = (
   res: Response,
   next: NextFunction
 ): void => {
-  const token = req.header("Authorization")?.split(" ")[1];
+  console.log("--cookies", req.cookies);
+  const token = req.cookies.access_token as string;
+  console.log("--token", token);
 
   if (!token) {
     res.status(403).json({ msg: "No token provided" });

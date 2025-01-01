@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import errorHandler from "./middleware/errorHandler";
 import routes from "./config/routes";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 const PORT = process.env.PORT;
@@ -17,6 +18,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.use(cookieParser());
 
 // Body parser middleware
 app.use(express.json());

@@ -4,19 +4,17 @@ import { TaskGroupType } from "../../default-data";
 import withContainer from "../../hoc/withContainer";
 import { State } from "../../state";
 import DashBoard from "../../Components/DashBoard";
-import axios from "../../axios";
 // import { arrayToObject } from "../../utils/arrayToObject";
 import { useNavigate } from "react-router";
+import Boards from "../../Components/Boards";
 
 function HomePage() {
   const [tasksGroupFromDb, setTaskGroupFromDb] = useState<TaskGroupType>();
-  const [loading, setLoading] = useState(true);
+
   const [creatingDefaultData, setCreatingDefaultData] = useState(false);
   const user = useSelector((state: State) => state.user);
   const navigate = useNavigate();
-  const header = {
-    Authorization: `Bearer ${user?.token}`,
-  };
+
   useEffect(() => {
     console.log("--user", user);
     if (!user) navigate("/sigin");
@@ -49,30 +47,21 @@ function HomePage() {
   //   setLoading(false);
   // };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      await axios
-        .get("/boards?include_tasks=true", {
-          headers: header,
-        })
-        .then((response) => {
-          // setTaskGroupFromDb(arrayToObject(response.data));
-          setLoading(false);
-        });
-    };
-    fetchData();
-  }, []);
+  // if (loading) {
+  //   return (
+  //     <>
+  //       <div>Loading...</div>
+  //       {creatingDefaultData && <div>Creating Dashboard...</div>}
+  //     </>
+  //   );
+  // }
 
-  if (loading) {
-    return (
-      <>
-        <div>Loading...</div>
-        {creatingDefaultData && <div>Creating Dashboard...</div>}
-      </>
-    );
-  }
-
-  return <div>{/* <DashBoard initialTaskGroups={tasksGroupFromDb} /> */}</div>;
+  return (
+    <div>
+      {/* <DashBoard initialTaskGroups={tasksGroupFromDb} /> */}
+      <Boards />
+    </div>
+  );
 }
 
 export default withContainer(HomePage);
