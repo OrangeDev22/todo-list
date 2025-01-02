@@ -11,7 +11,7 @@ function Header() {
   const { logout } = bindActionCreators(actionCreators, dispatch);
 
   return (
-    <header className="p-4 bg-sky-500 flex">
+    <header className="p-4 bg-gray-900 flex">
       <div className="font-bold">{user?.username || "Todo List"}</div>
       {user && (
         <div className="flex items*center ml-auto gap-3">

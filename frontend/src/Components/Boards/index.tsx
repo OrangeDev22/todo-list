@@ -124,12 +124,12 @@ const Boards = () => {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div>
+    <div className="h-full">
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="board" type="BOARD" direction="horizontal">
           {(provided) => (
             <div
-              className="flex"
+              className="flex items-start h-full"
               {...provided.droppableProps}
               ref={provided.innerRef}
             >
@@ -143,7 +143,7 @@ const Boards = () => {
                     {(provided) => {
                       return (
                         <div
-                          className="m-2 bg-neutral-300 rounded-md overflow-hidden flex flex-col p-2"
+                          className="m-2 bg-neutral-800 rounded-xl overflow-hidden flex flex-col p-2 text-gray-300 space-y-3"
                           key={board.id}
                           ref={provided.innerRef}
                           {...provided.draggableProps}
@@ -170,15 +170,14 @@ const Boards = () => {
                               tasks={board.tasks}
                             />
                           )}
-                          {!selectedGroup && (
-                            <button
-                              className="text-neutral-700 w-full hover:bg-neutral-400"
-                              onClick={() => setSelectedGroup(board.id)}
-                            >
-                              <span className="font-bold mr-2">+</span>Add a
-                              Task
-                            </button>
-                          )}
+
+                          <button
+                            className="hover:bg-neutral-700 rounded-md"
+                            onClick={() => setSelectedGroup(board.id)}
+                          >
+                            <span className="font-bold mr-2 self-start">+</span>
+                            Add a Task
+                          </button>
                         </div>
                       );
                     }}

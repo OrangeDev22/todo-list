@@ -26,15 +26,12 @@ const NewTaskCard = ({
   onSubmitCompleted: (newTasks: Task, boardId: number) => void;
   tasks: Task[];
 }) => {
-  const user = useSelector((state: State) => state.user);
   const [content, setContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const addNewTask = async (newTask: Task, boardId: number) => {};
-
   return (
     <form
-      className="m-1 space-y-2"
+      className="mx-1 space-y-2"
       onSubmit={async (e) => {
         e.preventDefault();
 
@@ -57,7 +54,7 @@ const NewTaskCard = ({
         }
       }}
     >
-      <div className="p-4 min-h-14 shadow-lg rounded-lg bg-sky-500">
+      <div className="shadow-lg rounded-lg bg-indigo-500">
         <InputField
           value={content}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -67,7 +64,7 @@ const NewTaskCard = ({
         />
       </div>
       <div className="w-full flex">
-        <Button onClick={() => setSubmitting(true)}>
+        <Button onClick={() => setSubmitting(true)} size="sm" className="!px-3">
           {submitting ? "Loading..." : "Add Task"}
         </Button>
         <button

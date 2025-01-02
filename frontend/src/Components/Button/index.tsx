@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 type Props = {
   children: any;
-  $size: "sm" | "md";
+  size: "sm" | "md";
   $fluid?: boolean;
   $inverted?: boolean;
 } & (
@@ -14,14 +14,12 @@ type Props = {
   | ButtonHTMLAttributes<HTMLButtonElement>
 );
 
-const Button = ({ $size, $fluid, $inverted, ...props }: Props) => {
+const Button = ({ size, $fluid, $inverted, ...props }: Props) => {
   const className = cc([
-    "inline-block rounded-md text-center bg-cyan-500 text-white active:bg-opacity-90",
+    "rounded-md text-center bg-indigo-500 text-white active:bg-opacity-90",
     {
-      // $size
-      "px-3 py-2 text-md": $size === "md",
-      "px-2 py-2 text-sm": $size === "sm",
-      // $fluid
+      "px-3 py-2 text-md": size === "md",
+      "px-2 py-1 text-sm h-10": size === "sm",
       "w-full": $fluid,
     },
     props.className,
@@ -35,7 +33,7 @@ const Button = ({ $size, $fluid, $inverted, ...props }: Props) => {
 };
 
 Button.defaultProps = {
-  $size: "md",
+  size: "md",
 };
 
 export default Button;

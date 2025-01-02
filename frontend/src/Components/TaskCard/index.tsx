@@ -19,9 +19,9 @@ const TaskCard = ({
   return (
     <div
       className={cc([
-        "mb-2 p-4 min-h-14 shadow-lg rounded-lg break-words relative",
-        { "bg-sky-700": isDragging },
-        { "bg-sky-500": !isDragging },
+        "p-2 shadow-lg rounded-lg break-words relative",
+        { "bg-indigo-700": isDragging },
+        { "bg-indigo-500": !isDragging },
       ])}
       onMouseEnter={() => setShowDeleteIcon(true)}
       onMouseLeave={() => setShowDeleteIcon(false)}
@@ -29,12 +29,12 @@ const TaskCard = ({
       {showDeleteIcon && (
         <div
           onClick={() => onDeletePressed(boardId, taskId)}
-          className="bg-white absolute rounded-full -top-1.5 -left-1.5 cursor-pointer"
+          className="bg-white absolute rounded-full cursor-pointer -top-2 -left-3"
         >
-          <DeleteIcon width={24} className="fill-red-600" />
+          <DeleteIcon width={22} className="fill-red-700" />
         </div>
       )}
-      <div> {content}</div>
+      <div>{content}</div>
     </div>
   );
 };

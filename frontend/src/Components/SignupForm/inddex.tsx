@@ -83,7 +83,7 @@ const SignupForm = () => {
       <div className="my-2">
         Have an account?{" "}
         <Link
-          to="/sigup"
+          to="/sigin"
           className="text-cyan-500 cursor-pointer"
           data-testid="set-signin-screen"
         >

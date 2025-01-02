@@ -24,7 +24,7 @@ const TasksList = ({ boards, originBoardId, tasks, setBoards }: Props) => {
           return (
             <div
               className={cc([
-                "p-1 w-64 min-h-32",
+                "w-64 space-y-2",
                 { "bg-sky-200": snapshot.isDraggingOver },
               ])}
               {...provided.droppableProps}
