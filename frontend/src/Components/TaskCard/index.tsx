@@ -29,7 +29,7 @@ const TaskCard = ({
       {showDeleteIcon && (
         <div
           onClick={() => onDeletePressed(boardId, taskId)}
-          className="bg-white absolute rounded-full cursor-pointer -top-2 -left-3"
+          className="bg-white absolute rounded-full cursor-pointer -top-2 -left-1"
         >
           <DeleteIcon width={22} className="fill-red-700" />
         </div>

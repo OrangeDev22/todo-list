@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import axiosInstance from "../../axios";
 import {
   DragDropContext,
@@ -17,6 +17,7 @@ const Boards = () => {
   const [boards, setBoards] = useState<BoardType[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedGroup, setSelectedGroup] = useState<number | null>(null);
+  const scrollContainer = useRef<HTMLDivElement | null>(null);
 
   const originalBoards = useMemo(() => {
     return cloneDeep(boards);
@@ -34,23 +35,32 @@ const Boards = () => {
     fetchData();
   }, []);
 
+  const restoreScrollContainerPointer = () => {
+    if (scrollContainer.current) {
+      scrollContainer.current.style.pointerEvents = "auto";
+    }
+  };
+
   const addNewTask = async (newTask: Task, boardId: number) => {
     setBoards((prevBoards) => addNewTaskToArray(newTask, boardId, prevBoards));
     setSelectedGroup(null);
   };
 
+  const onDragStart = () => {
+    if (scrollContainer.current) {
+      scrollContainer.current.style.pointerEvents = "none";
+    }
+  };
+
   const onDragEnd = async (result: DropResult) => {
     const { source, destination, type } = result;
 
-    if (!destination) {
-      return;
-    }
-
-    // Did not move anywhere - can bail early
     if (
-      source.droppableId === destination.droppableId &&
-      source.index === destination.index
+      !destination ||
+      (source.droppableId === destination.droppableId &&
+        source.index === destination.index)
     ) {
+      restoreScrollContainerPointer();
       return;
     }
 
@@ -110,7 +120,6 @@ const Boards = () => {
         ({ id, name, order }) => ({ id, name, order })
       );
 
-      console.log("--affected boards", affectedBoards);
       try {
         await axiosInstance.patch("/boards", {
           boards: affectedBoards,
@@ -119,17 +128,33 @@ const Boards = () => {
         console.error("--error", error);
       }
     }
+
+    restoreScrollContainerPointer();
+  };
+
+  const handleScroll = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (scrollContainer.current) {
+      const delta = e.movementX * -1;
+      scrollContainer.current.scrollLeft += delta;
+    }
   };
 
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="h-full">
-      <DragDropContext onDragEnd={onDragEnd}>
+    <div
+      className="overflow-x-auto cursor-grab h-full"
+      ref={scrollContainer}
+      onMouseDown={(e) => e.preventDefault()} // Prevent text selection
+      onMouseMove={(e) => {
+        if (e.buttons === 1) handleScroll(e);
+      }}
+    >
+      <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
         <Droppable droppableId="board" type="BOARD" direction="horizontal">
           {(provided) => (
             <div
-              className="flex items-start h-full"
+              className="flex items-start h-full w-full "
               {...provided.droppableProps}
               ref={provided.innerRef}
             >
@@ -143,7 +168,7 @@ const Boards = () => {
                     {(provided) => {
                       return (
                         <div
-                          className="m-2 bg-neutral-800 rounded-xl overflow-hidden flex flex-col p-2 text-gray-300 space-y-3"
+                          className="m-2 bg-neutral-800 rounded-xl overflow-hidden min-w-[272px] flex flex-col p-2 text-gray-300 space-y-3"
                           key={board.id}
                           ref={provided.innerRef}
                           {...provided.draggableProps}
@@ -152,7 +177,7 @@ const Boards = () => {
                             ...provided.draggableProps.style,
                           }}
                         >
-                          <h2>{board.name}</h2>
+                          <h2 className="mx-2 mt-2">{board.name}</h2>
 
                           <TasksList
                             tasks={board.tasks}
