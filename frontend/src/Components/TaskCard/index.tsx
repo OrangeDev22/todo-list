@@ -19,7 +19,7 @@ const TaskCard = ({
   return (
     <div
       className={cc([
-        "p-2 shadow-lg rounded-lg break-words relative",
+        "p-2 shadow-lg rounded-lg break-words relative max-w-[248px]",
         { "bg-indigo-700": isDragging },
         { "bg-indigo-500": !isDragging },
       ])}
