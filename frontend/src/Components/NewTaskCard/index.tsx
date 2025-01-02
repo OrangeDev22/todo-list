@@ -55,28 +55,6 @@ const NewTaskCard = ({
           console.error("--error", error);
           setSubmitting(false);
         }
-        // const body = {
-        //   taskGroupId: +boardId,
-        //   tasks: [...tasks, newTask],
-        // };
-        // await axios
-        //   .post("task/set_tasks", body, {
-        //     headers: {
-        //       Authorization: `Bearer ${user?.token}`,
-        //     },
-        //   })
-        //   .then((response) => {
-        //     response.data &&
-        //       onSubmitCompleted(
-        //         {
-        //           id: newTask.id,
-        //           content: newTask.content,
-        //           order: tasks.length,
-        //         },
-        //         +boardId
-        //       );
-        //     setSubmitting(false);
-        //   });
       }}
     >
       <div className="p-4 min-h-14 shadow-lg rounded-lg bg-sky-500">

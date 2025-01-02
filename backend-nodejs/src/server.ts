@@ -4,18 +4,12 @@ import errorHandler from "./middleware/errorHandler";
 import routes from "./config/routes";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { corsOptions } from "./config/cors";
 
 dotenv.config();
 const PORT = process.env.PORT;
 
 const app = express();
-
-const corsOptions = {
-  origin: process.env.FRONT_END_ORIGIN,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
-};
 
 app.use(cors(corsOptions));
 app.use(cookieParser());

@@ -40,7 +40,7 @@ const SiginForm = () => {
       })
       .then((response) => {
         const { userData } = response.data;
-        console.log("--response", response);
+
         setUser(userData);
         setResponseError("");
         navigate("/");

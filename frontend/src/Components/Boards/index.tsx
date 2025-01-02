@@ -9,7 +9,6 @@ import {
   addNewTaskToArray,
   getChangedTasks,
   isTaskDragEndValid,
-  replaceTempTaskId,
 } from "./utils";
 
 const Boards = () => {
@@ -17,7 +16,6 @@ const Boards = () => {
   const [loading, setLoading] = useState(true);
   const [selectedGroup, setSelectedGroup] = useState<number | null>(null);
 
-  console.log("--boards", boards);
   const originalBoards = useMemo(() => {
     return cloneDeep(boards);
   }, [boards]);

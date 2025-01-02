@@ -41,7 +41,7 @@ export const createTask = async (
         msg: `can't find board by id ${boardId}`,
       });
     }
-    console.log("--order", order);
+
     if (order === undefined) {
       return res.status(404).json({
         success: false,

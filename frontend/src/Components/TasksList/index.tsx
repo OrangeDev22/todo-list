@@ -7,6 +7,7 @@ import {
 } from "react-beautiful-dnd";
 import TaskCard from "../TaskCard";
 import cc from "classcat";
+import axiosInstance from "../../axios";
 
 type Props = {
   boards: BoardType[];
@@ -67,20 +68,22 @@ const TasksList = ({ boards, originBoardId, tasks, setBoards }: Props) => {
                                 return;
                               }
 
-                              const board = boards[boardIndex];
+                              await axiosInstance
+                                .delete(`/tasks/${taskId}`)
+                                .then(() => {
+                                  const board = boards[boardIndex];
 
-                              // Find and remove the task
-                              board.tasks = board.tasks.filter(
-                                (task) => task.id !== taskId
-                              );
+                                  board.tasks = board.tasks.filter(
+                                    (task) => task.id !== taskId
+                                  );
 
-                              // Update the order property of remaining tasks
-                              board.tasks.forEach((task, index) => {
-                                task.order = index;
-                              });
+                                  board.tasks.forEach((task, index) => {
+                                    task.order = index;
+                                  });
 
-                              // Update state
-                              setBoards([...boards]);
+                                  setBoards([...boards]);
+                                })
+                                .catch((error) => console.error(error));
                             }}
                           />
                         </div>

@@ -60,20 +60,3 @@ export const addNewTaskToArray = (
       : board
   );
 };
-
-export const replaceTempTaskId = (
-  newTask: Task,
-  boardId: number,
-  boards: BoardType[],
-  newTaskId: number
-) => {
-  const boardIndex = boards.findIndex((board) => board.id === boardId);
-  let tasks = boards[boardIndex].tasks;
-  const taskIndex = tasks.findIndex((task) => task.id === newTask.id);
-  console.log("--boards", boards);
-  console.log("--taskIndex", taskIndex);
-  console.log("--tasks", tasks);
-  tasks[taskIndex].id = newTaskId;
-  boards[boardIndex].tasks = tasks;
-  return boards;
-};
