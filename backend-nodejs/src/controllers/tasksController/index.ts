@@ -17,7 +17,7 @@ export const getTasks = async (
       orderBy: { order: "asc" },
     });
 
-    res.status(201).json({ success: true, data: { ...tasks } });
+    res.status(201).json({ success: true, record: { ...tasks } });
   } catch (error) {
     console.error("--error", error);
     next(new Error());
@@ -41,8 +41,8 @@ export const createTask = async (
         msg: `can't find board by id ${boardId}`,
       });
     }
-
-    if (!order) {
+    console.log("--order", order);
+    if (order === undefined) {
       return res.status(404).json({
         success: false,
         msg: `Order number is required`,
@@ -57,7 +57,7 @@ export const createTask = async (
       data: { content, boardId, order },
     });
 
-    res.status(201).json({ success: true, data: { ...newTask } });
+    res.status(201).json({ success: true, record: { ...newTask } });
   } catch (error) {
     console.error("--error", error);
     next(new Error());
@@ -99,7 +99,7 @@ export const updateTask = async (
       data: { content, boardId: newBoardId ?? boardId },
     });
 
-    res.status(201).json({ success: true, data: { ...updatedTask } });
+    res.status(201).json({ success: true, record: { ...updatedTask } });
   } catch (error) {
     console.error("--error", error);
     next(new Error());
@@ -126,7 +126,7 @@ export const deleteTask = async (
       where: { id: +id, AND: { boardId } },
     });
 
-    res.status(201).json({ success: true, data: { ...deletedTask } });
+    res.status(201).json({ success: true, record: { ...deletedTask } });
   } catch (error) {
     console.error("--error", error);
     next(new Error());
@@ -142,10 +142,13 @@ export const updateTasks = async (
     const { tasks } = req.body;
 
     const updates = tasks.map((task: Task) => {
-      return prisma.task.update({ where: { id: task.id }, data: { ...task } });
+      return prisma.task.update({
+        where: { id: task.id },
+        data: { ...task },
+      });
     });
     const updatedTasks = await Promise.all(updates);
-    res.status(201).json({ success: true, data: { ...updatedTasks } });
+    res.status(201).json({ success: true, record: { ...updatedTasks } });
   } catch (error) {
     console.error("--error", error);
     next(new Error());

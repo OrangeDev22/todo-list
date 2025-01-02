@@ -21,7 +21,7 @@ const TasksList = ({ boards, originBoardId, tasks, setBoards }: Props) => {
       <Droppable
         droppableId={originBoardId.toString()}
         key={originBoardId}
-        type="ROW"
+        type="TASK"
       >
         {(provided, snapshot) => {
           return (

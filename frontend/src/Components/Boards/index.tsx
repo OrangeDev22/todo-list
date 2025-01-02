@@ -1,35 +1,35 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
-import { State } from "../../state";
-import axiosIntance from "../../axios";
+import { useEffect, useMemo, useState } from "react";
+import axiosInstance from "../../axios";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import NewTaskCard from "../NewTaskCard";
 import { BoardType, Task } from "../../types";
 import TasksList from "../TasksList";
-import { cloneDeep, differenceWith, flatMap, isEqual } from "lodash";
+import { cloneDeep } from "lodash";
+import {
+  addNewTaskToArray,
+  getChangedTasks,
+  isTaskDragEndValid,
+  replaceTempTaskId,
+} from "./utils";
 
 const Boards = () => {
-  const user = useSelector((state: State) => state.user);
   const [boards, setBoards] = useState<BoardType[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedGroup, setSelectedGroup] = useState<number | null>(null);
+  const [tempIdToRealIdMap, setTempIdToRealIdMap] = useState<
+    Map<number, number>
+  >(new Map());
 
+  console.log("--boards", boards);
   const originalBoards = useMemo(() => {
     return cloneDeep(boards);
   }, [boards]);
-  // const header = {
-  //   Authorization: `Bearer ${user?.token}`,
-  // };
 
   useEffect(() => {
     const fetchData = async () => {
-      await axiosIntance
-        .get("/boards?include_tasks=true", {
-          // headers: header,
-        })
+      await axiosInstance
+        .get("/boards?include_tasks=true", {})
         .then((response) => {
-          // setTaskGroupFromDb(arrayToObject(response.data));
-          console.log("--response", response);
           setBoards(response.data.boards);
           setLoading(false);
         });
@@ -37,26 +37,67 @@ const Boards = () => {
     fetchData();
   }, []);
 
-  const onDragEnd = (result: DropResult) => {
-    console.log("--on drag end");
+  const updateTaskId = (tempId: number, realId: number, boardId: number) => {
+    setBoards((prevBoards) => {
+      return prevBoards.map((board) => {
+        if (board.id === boardId) {
+          return {
+            ...board,
+            tasks: board.tasks.map((task) =>
+              task.id === tempId ? { ...task, id: realId } : task
+            ),
+          };
+        }
+        return board;
+      });
+    });
+
+    // Update the tempId to realId map
+    setTempIdToRealIdMap((prevMap) => new Map(prevMap.set(tempId, realId)));
+  };
+
+  const addNewTask = async (newTask: Task, boardId: number) => {
+    // Optimistically add the task with the temp ID
+    setBoards((prevBoards) => addNewTaskToArray(newTask, boardId, prevBoards));
+
+    try {
+      // 1. Make the request to create the task
+      const response = await axiosInstance.post("/tasks", {
+        boardId,
+        content: newTask.content,
+        order: newTask.order,
+      });
+
+      const realTaskId = response.data.record?.id;
+
+      // 2. Update the task with the real ID in the state
+      updateTaskId(newTask.id, realTaskId, boardId);
+
+      // 3. Now that the task has been created, proceed with the drag-and-drop logic
+      // This will allow the `onDragEnd` function to run successfully, as the real ID is already set.
+    } catch (error) {
+      console.error("--error", error);
+
+      // Rollback the temporary task on error
+      setBoards((prevBoards) =>
+        prevBoards.map((board) => ({
+          ...board,
+          tasks: board.tasks.filter((task) => task.id !== newTask.id),
+        }))
+      );
+    }
+  };
+
+  const onDragEnd = async (result: DropResult) => {
     const { source, destination, type } = result;
 
-    // Didn't drop anything
-    if (!destination) return;
-
-    // Did not move anywhere - can bail early
-    if (
-      source.droppableId === destination.droppableId &&
-      source.index === destination.index
-    )
-      return;
+    if (!isTaskDragEndValid) return;
 
     const sourceGroupIndex = boards.findIndex(
       (board) => board.id.toString() === source.droppableId
     );
-
     const destinationBoardIndex = boards.findIndex(
-      (board) => board.id.toString() === destination.droppableId
+      (board) => board.id.toString() === destination?.droppableId
     );
 
     const sourceBoard = boards[sourceGroupIndex];
@@ -64,76 +105,44 @@ const Boards = () => {
 
     const [movedTask] = sourceBoard.tasks.splice(source.index, 1);
 
+    // Ensure realId is used before moving
+    if (tempIdToRealIdMap.has(movedTask.id)) {
+      movedTask.id = tempIdToRealIdMap.get(movedTask.id)!;
+    }
+
+    // Handle task movement logic (reorder tasks within the same board or across boards)
     if (sourceBoard === destinationBoard) {
       // Reordering within the same group
-      sourceBoard.tasks.splice(destination.index, 0, movedTask);
-
-      // Update order for tasks in the same group
+      sourceBoard.tasks.splice(destination?.index || 0, 0, movedTask);
       sourceBoard.tasks.forEach((task, index) => {
         task.order = index;
       });
-
-      // Collect affected tasks and update their order
     } else {
       // Moving between different groups
-      destinationBoard.tasks.splice(destination.index, 0, movedTask);
-
-      // Update order for tasks in both groups
+      destinationBoard.tasks.splice(destination?.index || 0, 0, movedTask);
       sourceBoard.tasks.forEach((task, index) => {
         task.order = index;
       });
       destinationBoard.tasks.forEach((task, index) => {
         task.order = index;
       });
-
-      // Collect affected tasks and update their order
     }
-    // Detect tasks with changed order or boardId
-    const currentTasks = flatMap(boards, (board) =>
-      board.tasks.map((task) => ({
-        id: task.id,
-        order: task.order,
-        boardId: board.id,
-      }))
-    );
 
-    const originalTasks = flatMap(originalBoards, (board) =>
-      board.tasks.map((task) => ({
-        id: task.id,
-        order: task.order,
-        boardId: board.id,
-      }))
-    );
-
-    console.log("---current tasks", currentTasks);
-    console.log("--originalTasks", originalTasks);
-    const changedTasks = differenceWith(currentTasks, originalTasks, isEqual);
-    console.log("--changedTasks", changedTasks);
     setBoards([...boards]);
-  };
 
-  const addNewTask = (newTask: Task, boardId: number) => {
-    setBoards((prevBoard) =>
-      prevBoard.map((board) =>
-        board.id === boardId
-          ? {
-              ...board,
-              tasks: [
-                ...board.tasks,
-                { ...newTask, order: board.tasks.length },
-              ],
-            }
-          : board
-      )
-    );
-    setSelectedGroup(null);
+    try {
+      // 4. Now perform the patch request after the task creation process is done
+      await axiosInstance.patch("/tasks", {
+        tasks: getChangedTasks(boards, originalBoards),
+      });
+    } catch (error) {
+      console.error("--error", error);
+    }
   };
-
   if (loading) return <div>Loading...</div>;
 
   return (
     <div className="flex">
-      {/* <div>Boards</div> */}
       <DragDropContext onDragEnd={onDragEnd}>
         {boards.map((board) => {
           return (
