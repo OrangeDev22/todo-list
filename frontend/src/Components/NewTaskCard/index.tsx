@@ -13,6 +13,7 @@ import Button from "../Button/index";
 import Container from "../Container/index";
 import { ReactComponent as DeleteIcon } from "../../assets/icons/delete.svg";
 import { Task } from "../../types";
+import axiosInstance from "../../axios";
 
 const NewTaskCard = ({
   boardId,
@@ -28,19 +29,32 @@ const NewTaskCard = ({
   const user = useSelector((state: State) => state.user);
   const [content, setContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  console.log("--new task content", content);
+
+  const addNewTask = async (newTask: Task, boardId: number) => {};
+
   return (
     <form
       className="m-1 space-y-2"
       onSubmit={async (e) => {
         e.preventDefault();
-        const newTask = {
-          content,
-          id: Date.now(),
-          order: tasks.length,
-          boardId,
-        };
-        onSubmitCompleted(newTask, +boardId);
+
+        try {
+          // 1. Make the request to create the task
+          const response = await axiosInstance.post("/tasks", {
+            boardId,
+            content,
+            order: tasks.length,
+          });
+
+          if (response.data.record) {
+            const newTask = response.data.record;
+            onSubmitCompleted(newTask, +boardId);
+            setSubmitting(false);
+          }
+        } catch (error) {
+          console.error("--error", error);
+          setSubmitting(false);
+        }
         // const body = {
         //   taskGroupId: +boardId,
         //   tasks: [...tasks, newTask],
