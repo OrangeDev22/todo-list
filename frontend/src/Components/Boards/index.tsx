@@ -58,6 +58,7 @@ const Boards = () => {
       const sourceGroupIndex = boards.findIndex(
         (board) => board.id.toString() === source.droppableId
       );
+
       const destinationBoardIndex = boards.findIndex(
         (board) => board.id.toString() === destination.droppableId
       );
@@ -135,8 +136,8 @@ const Boards = () => {
               {boards.map((board) => {
                 return (
                   <Draggable
-                    key={board.id.toString()}
-                    draggableId={board.id.toString()}
+                    key={`board-id-${board.id}`}
+                    draggableId={`board-id-${board.id}`}
                     index={board.order}
                   >
                     {(provided) => {
