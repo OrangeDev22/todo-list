@@ -11,6 +11,7 @@ import { BoardType, Task } from "../../types";
 import TasksList from "../TasksList";
 import { cloneDeep } from "lodash";
 import { addNewTaskToArray, getChangedBoards, getChangedTasks } from "./utils";
+import NewBoardCard from "../NewBoardCard";
 
 const Boards = () => {
   const [boards, setBoards] = useState<BoardType[]>([]);
@@ -57,9 +58,13 @@ const Boards = () => {
     }
   };
 
-  const addNewTask = async (newTask: Task, boardId: number) => {
+  const addNewTask = (newTask: Task, boardId: number) => {
     setBoards((prevBoards) => addNewTaskToArray(newTask, boardId, prevBoards));
     setSelectedGroup(null);
+  };
+
+  const addNewBoard = (newBoard: BoardType) => {
+    setBoards([...boards, newBoard]);
   };
 
   const onDragStart = () => {
@@ -228,6 +233,11 @@ const Boards = () => {
                 );
               })}
               {provided.placeholder}
+
+              <NewBoardCard
+                onSubmitCompleted={addNewBoard}
+                boardsLength={boards.length}
+              />
             </div>
           )}
         </Droppable>

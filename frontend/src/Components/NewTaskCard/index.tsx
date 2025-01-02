@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import InputField from "../InputField/index";
 import Button from "../Button/index";
-
+import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Task } from "../../types";
 import axiosInstance from "../../axios";
 
@@ -26,7 +26,6 @@ const NewTaskCard = ({
         e.preventDefault();
 
         try {
-          // 1. Make the request to create the task
           const response = await axiosInstance.post("/tasks", {
             boardId,
             content,
@@ -36,8 +35,8 @@ const NewTaskCard = ({
           if (response.data.record) {
             const newTask = response.data.record;
             onSubmitCompleted(newTask, +boardId);
-            setSubmitting(false);
           }
+          setSubmitting(false);
         } catch (error) {
           console.error("--error", error);
           setSubmitting(false);
@@ -53,7 +52,7 @@ const NewTaskCard = ({
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setContent(e.target.value)
           }
-          placeholder="PLease Type the content of the task"
+          placeholder="Please Type the content of the task"
         />
       </div>
       <div className="w-full flex">
@@ -65,7 +64,7 @@ const NewTaskCard = ({
           onClick={() => onCancel()}
           type="button"
         >
-          X
+          <XMarkIcon width={24} color="white" />
         </button>
       </div>
     </form>

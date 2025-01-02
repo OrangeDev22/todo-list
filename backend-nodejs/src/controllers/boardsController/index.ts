@@ -41,7 +41,7 @@ export const createBoard = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    const { name } = req.body;
+    const { name, order } = req.body;
     const { id: userId } = req.user;
 
     if (!name)
@@ -49,9 +49,12 @@ export const createBoard = async (
         .status(404)
         .json({ success: false, msg: "Name can't be empty" });
 
-    const newBoard = await prisma.board.create({ data: { name, userId } });
+    const newBoard = await prisma.board.create({
+      data: { name, userId, order },
+      include: { tasks: true },
+    });
 
-    res.status(201).json({ success: true, newBoard });
+    res.status(201).json({ success: true, record: newBoard });
   } catch (error) {
     console.error("--error", error);
     next(new Error());
