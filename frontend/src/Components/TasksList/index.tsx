@@ -19,11 +19,7 @@ type Props = {
 const TasksList = ({ boards, originBoardId, tasks, setBoards }: Props) => {
   return (
     <div>
-      <Droppable
-        droppableId={originBoardId.toString()}
-        key={originBoardId}
-        type="TASK"
-      >
+      <Droppable droppableId={originBoardId.toString()} type="TASK">
         {(provided, snapshot) => {
           return (
             <div

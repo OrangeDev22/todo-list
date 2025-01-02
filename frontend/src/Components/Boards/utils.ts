@@ -2,25 +2,10 @@ import { differenceWith, flatMap, isEqual } from "lodash";
 import { DraggableLocation, DropResult } from "react-beautiful-dnd";
 import { BoardType, Task } from "../../types";
 
-export const isTaskDragEndValid = (
-  source: DraggableLocation,
-  destination: DraggableLocation | undefined,
-  type: string
-) => {
-  // Didn't drop anything
-  if (!destination) return false;
-
-  // Did not move anywhere - can bail early
-  if (
-    source.droppableId === destination.droppableId &&
-    source.index === destination.index
-  )
-    return false;
-
-  if (type !== "TASK") return false;
-
-  return true;
-};
+export const getChangedBoards = (
+  boards: BoardType[],
+  originalBoards: BoardType[]
+) => differenceWith(boards, originalBoards, isEqual);
 
 export const getChangedTasks = (
   boards: BoardType[],

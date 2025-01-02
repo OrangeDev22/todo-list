@@ -1,15 +1,17 @@
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import axiosInstance from "../../axios";
-import { DragDropContext, DropResult } from "react-beautiful-dnd";
+import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  DropResult,
+} from "react-beautiful-dnd";
 import NewTaskCard from "../NewTaskCard";
 import { BoardType, Task } from "../../types";
 import TasksList from "../TasksList";
 import { cloneDeep } from "lodash";
-import {
-  addNewTaskToArray,
-  getChangedTasks,
-  isTaskDragEndValid,
-} from "./utils";
+import { addNewTaskToArray, getChangedBoards, getChangedTasks } from "./utils";
+import { snapshot } from "node:test";
 
 const Boards = () => {
   const [boards, setBoards] = useState<BoardType[]>([]);
@@ -40,14 +42,24 @@ const Boards = () => {
   const onDragEnd = async (result: DropResult) => {
     const { source, destination, type } = result;
 
-    if (!isTaskDragEndValid) return;
+    if (!destination) {
+      return;
+    }
+
+    // Did not move anywhere - can bail early
+    if (
+      source.droppableId === destination.droppableId &&
+      source.index === destination.index
+    ) {
+      return;
+    }
 
     if (type === "TASK") {
       const sourceGroupIndex = boards.findIndex(
         (board) => board.id.toString() === source.droppableId
       );
       const destinationBoardIndex = boards.findIndex(
-        (board) => board.id.toString() === destination?.droppableId
+        (board) => board.id.toString() === destination.droppableId
       );
 
       const sourceBoard = boards[sourceGroupIndex];
@@ -56,17 +68,19 @@ const Boards = () => {
       const [movedTask] = sourceBoard.tasks.splice(source.index, 1);
 
       if (sourceBoard === destinationBoard) {
-        // Reordering within the same group
-        sourceBoard.tasks.splice(destination?.index || 0, 0, movedTask);
-        sourceBoard.tasks.forEach((task, index) => {
-          task.order = index;
-        });
+        // Reordering within the same board
+        sourceBoard.tasks.splice(destination.index, 0, movedTask);
       } else {
-        // Moving between different groups
-        destinationBoard.tasks.splice(destination?.index || 0, 0, movedTask);
-        sourceBoard.tasks.forEach((task, index) => {
-          task.order = index;
-        });
+        // Moving between different boards
+        destinationBoard.tasks.splice(destination.index, 0, movedTask);
+      }
+
+      // Update task orders
+      sourceBoard.tasks.forEach((task, index) => {
+        task.order = index;
+      });
+
+      if (sourceBoard !== destinationBoard) {
         destinationBoard.tasks.forEach((task, index) => {
           task.order = index;
         });
@@ -81,48 +95,99 @@ const Boards = () => {
       } catch (error) {
         console.error("--error", error);
       }
+    } else if (type === "BOARD") {
+      const [movedBoard] = boards.splice(source.index, 1);
+      boards.splice(destination.index, 0, movedBoard);
+
+      // Update board orders
+      boards.forEach((board, index) => {
+        board.order = index;
+      });
+
+      setBoards([...boards]);
+      const affectedBoards = getChangedBoards(boards, originalBoards).map(
+        ({ id, name, order }) => ({ id, name, order })
+      );
+
+      console.log("--affected boards", affectedBoards);
+      try {
+        await axiosInstance.patch("/boards", {
+          boards: affectedBoards,
+        });
+      } catch (error) {
+        console.error("--error", error);
+      }
     }
   };
 
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="flex">
+    <div>
       <DragDropContext onDragEnd={onDragEnd}>
-        {boards.map((board) => {
-          return (
-            <div key={board.id}>
-              <div className="m-2 bg-neutral-300 rounded-md overflow-hidden flex flex-col p-2">
-                <h2>{board.name}</h2>
-
-                <TasksList
-                  tasks={board.tasks}
-                  originBoardId={board.id}
-                  setBoards={setBoards}
-                  boards={boards}
-                />
-                {selectedGroup && selectedGroup === board.id && (
-                  <NewTaskCard
-                    boardId={board.id}
-                    onCancel={() => {
-                      setSelectedGroup(null);
-                    }}
-                    onSubmitCompleted={addNewTask}
-                    tasks={board.tasks}
-                  />
-                )}
-                {!selectedGroup && (
-                  <button
-                    className="text-neutral-700 w-full hover:bg-neutral-400"
-                    onClick={() => setSelectedGroup(board.id)}
+        <Droppable droppableId="board" type="BOARD" direction="horizontal">
+          {(provided) => (
+            <div
+              className="flex"
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+            >
+              {boards.map((board) => {
+                return (
+                  <Draggable
+                    key={board.id.toString()}
+                    draggableId={board.id.toString()}
+                    index={board.order}
                   >
-                    <span className="font-bold mr-2">+</span>Add a Task
-                  </button>
-                )}
-              </div>
+                    {(provided) => {
+                      return (
+                        <div
+                          className="m-2 bg-neutral-300 rounded-md overflow-hidden flex flex-col p-2"
+                          key={board.id}
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          style={{
+                            ...provided.draggableProps.style,
+                          }}
+                        >
+                          <h2>{board.name}</h2>
+
+                          <TasksList
+                            tasks={board.tasks}
+                            originBoardId={board.id}
+                            setBoards={setBoards}
+                            boards={boards}
+                          />
+                          {selectedGroup && selectedGroup === board.id && (
+                            <NewTaskCard
+                              boardId={board.id}
+                              onCancel={() => {
+                                setSelectedGroup(null);
+                              }}
+                              onSubmitCompleted={addNewTask}
+                              tasks={board.tasks}
+                            />
+                          )}
+                          {!selectedGroup && (
+                            <button
+                              className="text-neutral-700 w-full hover:bg-neutral-400"
+                              onClick={() => setSelectedGroup(board.id)}
+                            >
+                              <span className="font-bold mr-2">+</span>Add a
+                              Task
+                            </button>
+                          )}
+                        </div>
+                      );
+                    }}
+                  </Draggable>
+                );
+              })}
+              {provided.placeholder}
             </div>
-          );
-        })}
+          )}
+        </Droppable>
       </DragDropContext>
     </div>
   );
