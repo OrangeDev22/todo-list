@@ -12,29 +12,13 @@ import TasksList from "../TasksList";
 import { cloneDeep } from "lodash";
 import { addNewTaskToArray, getChangedBoards, getChangedTasks } from "./utils";
 import NewBoardCard from "../NewBoardCard";
+import { useBoards } from "../../hooks/useBoards";
 
 const Boards = () => {
-  const [boards, setBoards] = useState<BoardType[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { boards, loading, originalBoards, setBoards } = useBoards();
   const [selectedGroup, setSelectedGroup] = useState<number | null>(null);
   const [isScrollbarVisible, setIsScrollbarVisible] = useState(false);
   const scrollContainer = useRef<HTMLDivElement | null>(null);
-
-  const originalBoards = useMemo(() => {
-    return cloneDeep(boards);
-  }, [boards]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      await axiosInstance
-        .get("/boards?include_tasks=true", {})
-        .then((response) => {
-          setBoards(response.data.boards);
-          setLoading(false);
-        });
-    };
-    fetchData();
-  }, []);
 
   useEffect(() => {
     const checkScrollbarVisibility = () => {
