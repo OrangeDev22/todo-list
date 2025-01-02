@@ -1,17 +1,7 @@
 import React, { useState } from "react";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import cc from "classcat";
 import InputField from "../InputField/index";
-import axios from "../../axios";
-import { useSelector } from "react-redux";
-import { State } from "../../state";
 import Button from "../Button/index";
-// import {
-//   orderMultipleGroupsTasks,
-//   orderSingleGroupTasks,
-// } from "../../utils/orderTasks";
-import Container from "../Container/index";
-import { ReactComponent as DeleteIcon } from "../../assets/icons/delete.svg";
+
 import { Task } from "../../types";
 import axiosInstance from "../../axios";
 
@@ -54,7 +44,10 @@ const NewTaskCard = ({
         }
       }}
     >
-      <div className="shadow-lg rounded-lg bg-indigo-500">
+      <div
+        className="shadow-lg rounded-lg bg-indigo-500"
+        onMouseDown={(e) => e.stopPropagation()}
+      >
         <InputField
           value={content}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>

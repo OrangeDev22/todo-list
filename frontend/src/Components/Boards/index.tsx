@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import axiosInstance from "../../axios";
 import {
   DragDropContext,
@@ -11,12 +11,12 @@ import { BoardType, Task } from "../../types";
 import TasksList from "../TasksList";
 import { cloneDeep } from "lodash";
 import { addNewTaskToArray, getChangedBoards, getChangedTasks } from "./utils";
-import { snapshot } from "node:test";
 
 const Boards = () => {
   const [boards, setBoards] = useState<BoardType[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedGroup, setSelectedGroup] = useState<number | null>(null);
+  const [isScrollbarVisible, setIsScrollbarVisible] = useState(false);
   const scrollContainer = useRef<HTMLDivElement | null>(null);
 
   const originalBoards = useMemo(() => {
@@ -33,6 +33,22 @@ const Boards = () => {
         });
     };
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    const checkScrollbarVisibility = () => {
+      if (scrollContainer.current) {
+        const hasHorizontalScrollbar =
+          scrollContainer.current.scrollWidth >
+          scrollContainer.current.clientWidth;
+        setIsScrollbarVisible(hasHorizontalScrollbar);
+      }
+    };
+
+    checkScrollbarVisibility();
+
+    window.addEventListener("resize", checkScrollbarVisibility);
+    return () => window.removeEventListener("resize", checkScrollbarVisibility);
   }, []);
 
   const restoreScrollContainerPointer = () => {
@@ -143,7 +159,9 @@ const Boards = () => {
 
   return (
     <div
-      className="overflow-x-auto cursor-grab h-full"
+      className={`overflow-x-auto h-full ${
+        isScrollbarVisible ? "cursor-grab" : ""
+      }`}
       ref={scrollContainer}
       onMouseDown={(e) => e.preventDefault()} // Prevent text selection
       onMouseMove={(e) => {
