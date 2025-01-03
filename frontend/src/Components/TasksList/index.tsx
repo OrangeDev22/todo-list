@@ -8,14 +8,14 @@ import {
 import cc from "classcat";
 import TaskCard from "./components/TaskCard";
 import TaskDraggable from "./components/TaskDraggable";
+import { useBoards } from "../../providers/BoardsProvider";
 
 type Props = {
   tasks: Task[];
   originBoardId: number;
-  onDeleteClicked: (taskId: number) => void;
 };
 
-const TasksList = ({ tasks, originBoardId, onDeleteClicked }: Props) => {
+const TasksList = ({ tasks, originBoardId }: Props) => {
   return (
     <div
       className="flex-grow overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 rounded-md"
@@ -39,7 +39,6 @@ const TasksList = ({ tasks, originBoardId, onDeleteClicked }: Props) => {
                 boardId={originBoardId}
                 index={index}
                 task={task}
-                onDeletePressed={onDeleteClicked}
                 key={task.id}
               />
             ))}

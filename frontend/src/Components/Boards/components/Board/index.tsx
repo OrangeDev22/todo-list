@@ -1,5 +1,5 @@
 import { Draggable } from "react-beautiful-dnd";
-import { BoardType, Task } from "../../../../types";
+import { BoardType } from "../../../../types";
 import TasksList from "../../../TasksList";
 import NewTaskCard from "../../../NewTaskCard";
 import { EllipsisHorizontalIcon } from "@heroicons/react/24/solid";
@@ -8,33 +8,38 @@ import MenuDropDown from "../../../MenuDropDown";
 import axiosInstance from "../../../../axios";
 import { useState } from "react";
 import EditValue from "../../../EditValue";
+import { useBoards } from "../../../../providers/BoardsProvider";
 
 interface Props {
   board: BoardType;
-  selectedGroup: number | null;
-  onSelectGroup: (boardId: number | null) => void;
-  onAddTask: (task: Task, boardId: number) => void;
-  onDeleteTask: (taskId: number) => void;
-  onEditTaskContent: (newContent: string, taskId: number) => void;
   onOpenMenu: () => void;
-  onDeleteBoard: () => void;
-  onEditBoardName: (newName: string) => void;
   isMenuOpen: boolean;
 }
 
-const Board = ({
-  board,
-  selectedGroup,
-  onSelectGroup,
-  onAddTask,
-  onDeleteTask,
-  onDeleteBoard,
-  onEditBoardName,
-}: Props) => {
+const Board = ({ board }: Props) => {
+  const {
+    selectedBoard,
+    addNewTask,
+    editBoard,
+    removeBoard,
+    setSelectedBoard,
+  } = useBoards();
   const [isEditing, setIsEditing] = useState(false);
 
-  const handleNameChange = (newName: string) => {
-    if (newName !== board.name) onEditBoardName(newName);
+  const handleNameChange = async (newName: string) => {
+    if (newName !== board.name) {
+      try {
+        const response = await axiosInstance.patch(`boards/${board.id}`, {
+          name: newName,
+        });
+
+        if (response.data.record) {
+          editBoard(newName, board.id);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
 
     setIsEditing(false);
   };
@@ -45,12 +50,11 @@ const Board = ({
         const response = await axiosInstance.delete(`/boards/${board.id}`);
 
         if (response.data.record) {
-          onDeleteBoard();
+          removeBoard(board.id);
         }
-
         break;
       case BoardMenuActions.ADD_TASK:
-        onSelectGroup(board.id);
+        setSelectedBoard(board.id);
         break;
       default:
         return;
@@ -104,25 +108,21 @@ const Board = ({
               </MenuDropDown>
             </div>
 
-            <TasksList
-              tasks={board.tasks}
-              originBoardId={board.id}
-              onDeleteClicked={onDeleteTask}
-            />
-            {selectedGroup === board.id && (
+            <TasksList tasks={board.tasks} originBoardId={board.id} />
+            {selectedBoard === board.id && (
               <NewTaskCard
                 boardId={board.id}
                 onCancel={() => {
-                  onSelectGroup(null);
+                  setSelectedBoard(null);
                 }}
-                onSubmitCompleted={onAddTask}
+                onSubmitCompleted={addNewTask}
                 tasks={board.tasks}
               />
             )}
 
             <button
               className="hover:bg-neutral-700 rounded-md"
-              onClick={() => onSelectGroup(board.id)}
+              onClick={() => setSelectedBoard(board.id)}
             >
               <span className="font-bold mr-2 self-start">+</span>
               Add a Task

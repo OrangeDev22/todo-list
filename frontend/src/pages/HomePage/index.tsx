@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { State } from "../../state";
 import { useNavigate } from "react-router";
 import Boards from "../../Components/Boards";
-import BoardsProvider from "../../providers/BoardContext";
+import BoardsProvider from "../../providers/BoardsProvider";
 
 function HomePage() {
   const user = useSelector((state: State) => state.user);

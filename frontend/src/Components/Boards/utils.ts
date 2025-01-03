@@ -42,21 +42,6 @@ export const getChangedTasks = (
   return differenceWith(currentTasks, originalTasks, isEqual);
 };
 
-export const addNewTaskToArray = (
-  newTask: Task,
-  boardId: number,
-  boards: BoardType[]
-) => {
-  return boards.map((board) =>
-    board.id === boardId
-      ? {
-          ...board,
-          tasks: [...board.tasks, { ...newTask, order: board.tasks.length }],
-        }
-      : board
-  );
-};
-
 export const handleDragEnd = async (
   result: DropResult,
   boards: BoardType[],

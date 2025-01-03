@@ -5,17 +5,13 @@ import Button from "../Button/index";
 import { BoardType, Task } from "../../types";
 import axiosInstance from "../../axios";
 import { XMarkIcon } from "@heroicons/react/24/solid";
+import { useBoards } from "../../providers/BoardsProvider";
 
-const NewBoardCard = ({
-  boardsLength,
-  onSubmitCompleted,
-}: {
-  boardsLength: number;
-  onSubmitCompleted: (newBoard: BoardType) => void;
-}) => {
+const NewBoardCard = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [name, setName] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const { boards, addNewBoard } = useBoards();
 
   const closeForm = () => {
     setName("");
@@ -42,11 +38,11 @@ const NewBoardCard = ({
         try {
           const response = await axiosInstance.post("/boards", {
             name,
-            order: boardsLength,
+            order: boards.length,
           });
           if (response.data.record) {
             const newBoard = response.data.record;
-            onSubmitCompleted(newBoard);
+            addNewBoard(newBoard);
           }
           setSubmitting(false);
         } catch (error) {

@@ -4,16 +4,14 @@ import { ReactComponent as DeleteIcon } from "../../../../assets/icons/delete.sv
 import EditValue from "../../../EditValue";
 
 const TaskCard = ({
-  id,
   content,
   isDragging,
   onDeletePressed,
   onEditTaskContent,
 }: {
-  id: number;
   content: string;
   isDragging: boolean;
-  onDeletePressed: (id: number) => void;
+  onDeletePressed: () => void;
   onEditTaskContent: (newValue: string) => void;
 }) => {
   const [showDeleteIcon, setShowDeleteIcon] = useState(false);
@@ -37,7 +35,7 @@ const TaskCard = ({
     >
       {showDeleteIcon && (
         <div
-          onClick={() => onDeletePressed(id)}
+          onClick={() => onDeletePressed()}
           className="bg-white absolute rounded-full cursor-pointer -top-2 left-0"
         >
           <DeleteIcon width={22} className="fill-red-700" />
