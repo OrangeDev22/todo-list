@@ -40,7 +40,6 @@ const NewBoardCard = ({
         e.preventDefault();
 
         try {
-          console.log("--length", boardsLength);
           const response = await axiosInstance.post("/boards", {
             name,
             order: boardsLength,

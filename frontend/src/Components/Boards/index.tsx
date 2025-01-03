@@ -56,6 +56,13 @@ const Boards = () => {
     }
   };
 
+  const editBoard = (newName: string, id: number) => {
+    const updatedBoards = boards.map((board) =>
+      board.id === id ? { ...board, name: newName } : board
+    );
+    setBoards(updatedBoards); // Update the state with the new array
+  };
+
   if (loading) return <div>Loading...</div>;
 
   return (
@@ -100,7 +107,8 @@ const Boards = () => {
                     onOpenMenu={() => setSelectedBoardOptions(board.id)}
                     isMenuOpen={board.id === selectedBoardOptions}
                     selectedGroup={selectedGroup}
-                    onDeleteBoard={removeBoard}
+                    onDeleteBoard={() => removeBoard(board.id)}
+                    onEditBoardName={(newName) => editBoard(newName, board.id)}
                   />
                 );
               })}

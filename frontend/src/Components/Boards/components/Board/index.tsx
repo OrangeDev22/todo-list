@@ -7,6 +7,8 @@ import { EllipsisHorizontalIcon } from "@heroicons/react/24/solid";
 import { BoardMenuActions, BoardMenuOptions } from "../../utils";
 import MenuDropDown from "../../../MenuDropDown";
 import axiosInstance from "../../../../axios";
+import { useState } from "react";
+import EditBoard from "../EditBoard";
 
 interface Props {
   board: BoardType;
@@ -15,7 +17,8 @@ interface Props {
   onAddTask: (task: Task, boardId: number) => void;
   onDeleteTask: (taskId: number) => void;
   onOpenMenu: () => void;
-  onDeleteBoard: (id: number) => void;
+  onDeleteBoard: () => void;
+  onEditBoardName: (newName: string) => void;
   isMenuOpen: boolean;
 }
 
@@ -26,14 +29,23 @@ const Board = ({
   onAddTask,
   onDeleteTask,
   onDeleteBoard,
+  onEditBoardName,
 }: Props) => {
+  const [isEditing, setIsEditing] = useState(false);
+
+  const handleNameChange = (newName: string) => {
+    if (newName !== board.name) onEditBoardName(newName);
+
+    setIsEditing(false);
+  };
+
   const handleBoardAction = async (key: string) => {
     switch (key) {
       case BoardMenuActions.DELETE_BOARD:
         const response = await axiosInstance.delete(`/boards/${board.id}`);
 
         if (response.data.record) {
-          onDeleteBoard(board.id);
+          onDeleteBoard();
         }
 
         break;
@@ -64,7 +76,20 @@ const Board = ({
             }}
           >
             <div className="flex justify-between items-center mx-2 mt-2">
-              <h2 className="font-semibold">{board.name}</h2>
+              {!isEditing ? (
+                <h2
+                  className="font-semibold cursor-pointer"
+                  onClick={() => setIsEditing(true)}
+                >
+                  {board.name}
+                </h2>
+              ) : (
+                <EditBoard
+                  boardId={board.id}
+                  initialValue={board.name}
+                  onComplete={handleNameChange}
+                />
+              )}
               <MenuDropDown
                 items={BoardMenuOptions}
                 position="right"

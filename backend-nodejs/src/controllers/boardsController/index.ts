@@ -131,7 +131,7 @@ export const patchBoard = async (
       data: { name },
     });
 
-    res.status(201).json({ success: true, newBoard });
+    res.status(201).json({ success: true, record: newBoard });
   } catch (error) {
     console.error("--error", error);
     next(new Error());
