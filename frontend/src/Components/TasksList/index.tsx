@@ -5,18 +5,17 @@ import {
   Droppable,
   DropResult,
 } from "react-beautiful-dnd";
-import TaskCard from "../TaskCard";
 import cc from "classcat";
-import axiosInstance from "../../axios";
+import TaskCard from "./components/TaskCard";
+import TaskDraggable from "./components/TaskDraggable";
 
 type Props = {
-  boards: BoardType[];
-  originBoardId: number;
   tasks: Task[];
-  setBoards: React.Dispatch<React.SetStateAction<BoardType[]>>;
+  originBoardId: number;
+  onDeleteClicked: (taskId: number) => void;
 };
 
-const TasksList = ({ boards, originBoardId, tasks, setBoards }: Props) => {
+const TasksList = ({ tasks, originBoardId, onDeleteClicked }: Props) => {
   return (
     <div
       className="flex-grow overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 rounded-md"
@@ -28,7 +27,7 @@ const TasksList = ({ boards, originBoardId, tasks, setBoards }: Props) => {
         {(provided, snapshot) => (
           <div
             className={cc([
-              "space-y-2 min-h-1",
+              "space-y-2 min-h-1 rounded-lg",
               { "bg-neutral-600": snapshot.isDraggingOver },
             ])}
             {...provided.droppableProps}
@@ -36,58 +35,13 @@ const TasksList = ({ boards, originBoardId, tasks, setBoards }: Props) => {
             data-testid={`group-task-${originBoardId}`}
           >
             {tasks.map((task, index) => (
-              <Draggable
-                key={task.id.toString()}
-                draggableId={task.id.toString()}
-                index={task.order}
-              >
-                {(provided, snapshot) => (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                    style={{
-                      ...provided.draggableProps.style,
-                    }}
-                    data-testid={`task-${task.id}`}
-                    className="my-3"
-                  >
-                    <TaskCard
-                      content={task.content}
-                      isDragging={snapshot.isDragging}
-                      boardId={originBoardId}
-                      taskId={task.id}
-                      onDeletePressed={async (boardId, taskId) => {
-                        const boardIndex = boards.findIndex(
-                          (board) => originBoardId === board.id
-                        );
-
-                        if (boardIndex === -1) {
-                          console.error("Board not found");
-                          return;
-                        }
-
-                        await axiosInstance
-                          .delete(`/tasks/${taskId}`)
-                          .then(() => {
-                            const board = boards[boardIndex];
-
-                            board.tasks = board.tasks.filter(
-                              (task) => task.id !== taskId
-                            );
-
-                            board.tasks.forEach((task, index) => {
-                              task.order = index;
-                            });
-
-                            setBoards([...boards]);
-                          })
-                          .catch((error) => console.error(error));
-                      }}
-                    />
-                  </div>
-                )}
-              </Draggable>
+              <TaskDraggable
+                boardId={originBoardId}
+                index={index}
+                task={task}
+                onDeletePressed={onDeleteClicked}
+                key={task.id}
+              />
             ))}
             {provided.placeholder}
           </div>
