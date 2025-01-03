@@ -14,9 +14,10 @@ interface Props {
   board: BoardType;
   onOpenMenu: () => void;
   isMenuOpen: boolean;
+  index: number;
 }
 
-const Board = ({ board }: Props) => {
+const Board = ({ board, index }: Props) => {
   const {
     selectedBoard,
     addNewTask,
@@ -70,12 +71,12 @@ const Board = ({ board }: Props) => {
     <Draggable
       key={`board-id-${board.id}`}
       draggableId={`board-id-${board.id}`}
-      index={board.order}
+      index={index}
     >
       {(provided) => {
         return (
           <div
-            className="m-2 bg-neutral-800 rounded-xl overflow-hidden min-w-[272px] flex flex-col p-2 text-gray-300 space-y-3"
+            className="m-2 bg-neutral-800 rounded-xl overflow-hidden min-w-[272px] flex flex-col p-2 text-gray-300 "
             key={board.id}
             ref={provided.innerRef}
             {...provided.draggableProps}

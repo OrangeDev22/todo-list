@@ -57,12 +57,13 @@ const Boards = () => {
               {...provided.droppableProps}
               ref={provided.innerRef}
             >
-              {boards.map((board) => {
+              {boards.map((board, index) => {
                 return (
                   <Board
                     board={board}
                     onOpenMenu={() => setSelectedBoardOptions(board.id)}
                     isMenuOpen={board.id === selectedBoardOptions}
+                    index={index}
                   />
                 );
               })}

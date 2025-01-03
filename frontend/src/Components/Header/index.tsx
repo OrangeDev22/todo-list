@@ -23,7 +23,7 @@ function Header() {
                 window.confirm("Are you sure you want to delete your account")
               ) {
                 await axios
-                  .get("/users/delete_user", {
+                  .delete("/users", {
                     headers: { Authorization: `Bearer ${user.token}` },
                   })
                   .then(() => logout());
