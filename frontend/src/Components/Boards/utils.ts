@@ -3,10 +3,14 @@ import { DropResult } from "react-beautiful-dnd";
 import { BoardType, Task } from "../../types";
 import axiosInstance from "../../axios";
 
+export enum BoardMenuActions {
+  DELETE_BOARD = "delete_board",
+  ADD_TASK = "add_task",
+}
+
 export const BoardMenuOptions = [
-  { key: "edit_board", label: "Edit" },
-  { key: "delete_board", label: "Delete" },
-  { key: "add_task", label: "Add Task" },
+  { key: BoardMenuActions.DELETE_BOARD, label: "Delete" },
+  { key: BoardMenuActions.ADD_TASK, label: "Add Task" },
 ];
 
 export const getChangedBoards = (

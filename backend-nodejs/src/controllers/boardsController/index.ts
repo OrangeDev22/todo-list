@@ -89,7 +89,7 @@ export const deleteBoard = async (
       where: { id: parseInt(id) },
     });
 
-    res.status(201).json({ success: true, deleteBoard });
+    res.status(201).json({ success: true, record: deleteBoard });
   } catch (error) {
     console.error("--error", error);
     next(new Error());

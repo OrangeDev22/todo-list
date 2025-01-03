@@ -40,6 +40,12 @@ const Boards = () => {
     setSelectedGroup(null);
   };
 
+  const removeBoard = (id: number) => {
+    setBoards((prevBoards) =>
+      prevBoards.filter((prevBoard) => prevBoard.id !== id)
+    );
+  };
+
   const addNewBoard = (newBoard: BoardType) => {
     setBoards([...boards, newBoard]);
   };
@@ -94,6 +100,7 @@ const Boards = () => {
                     onOpenMenu={() => setSelectedBoardOptions(board.id)}
                     isMenuOpen={board.id === selectedBoardOptions}
                     selectedGroup={selectedGroup}
+                    onDeleteBoard={removeBoard}
                   />
                 );
               })}

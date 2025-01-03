@@ -4,8 +4,9 @@ import TasksList from "../../../TasksList";
 import NewTaskCard from "../../../NewTaskCard";
 import { Menu, MenuButton, MenuItem } from "@szhsin/react-menu";
 import { EllipsisHorizontalIcon } from "@heroicons/react/24/solid";
-import { BoardMenuOptions } from "../../utils";
+import { BoardMenuActions, BoardMenuOptions } from "../../utils";
 import MenuDropDown from "../../../MenuDropDown";
+import axiosInstance from "../../../../axios";
 
 interface Props {
   board: BoardType;
@@ -14,6 +15,7 @@ interface Props {
   onAddTask: (task: Task, boardId: number) => void;
   onDeleteTask: (taskId: number) => void;
   onOpenMenu: () => void;
+  onDeleteBoard: (id: number) => void;
   isMenuOpen: boolean;
 }
 
@@ -23,7 +25,26 @@ const Board = ({
   onSelectGroup,
   onAddTask,
   onDeleteTask,
+  onDeleteBoard,
 }: Props) => {
+  const handleBoardAction = async (key: string) => {
+    switch (key) {
+      case BoardMenuActions.DELETE_BOARD:
+        const response = await axiosInstance.delete(`/boards/${board.id}`);
+
+        if (response.data.record) {
+          onDeleteBoard(board.id);
+        }
+
+        break;
+      case BoardMenuActions.ADD_TASK:
+        onSelectGroup(board.id);
+        break;
+      default:
+        return;
+    }
+  };
+
   return (
     <Draggable
       key={`board-id-${board.id}`}
@@ -51,6 +72,7 @@ const Board = ({
                 listClassName="py-0"
                 itemMenuClassName="!text-gray-300 px-3 hover:bg-neutral-700 mb-2"
                 headerTitle="Board actions"
+                onActionClicked={handleBoardAction}
               >
                 <button className="p-1 rounded-md hover:bg-neutral-600">
                   <EllipsisHorizontalIcon width={20} color="white" />

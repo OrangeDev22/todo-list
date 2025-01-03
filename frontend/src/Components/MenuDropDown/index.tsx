@@ -14,6 +14,7 @@ type Props = {
   itemMenuClassName?: string;
   listClassName?: string;
   position?: Position;
+  onActionClicked: (key: string) => void;
 };
 
 function MenuDropDown({
@@ -24,6 +25,7 @@ function MenuDropDown({
   listClassName,
   headerTitle,
   position = "bottom",
+  onActionClicked,
 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [anchorRect, setAnchorRect] = useState<DOMRect | null>(null);
@@ -120,12 +122,15 @@ function MenuDropDown({
                 <div
                   key={item.key}
                   className={twMerge(
-                    `block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
+                    `block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer ${
                       item.className || "text-gray-700"
                     }`,
                     itemMenuClassName
                   )}
-                  onClick={() => setIsOpen(false)}
+                  onClick={() => {
+                    onActionClicked(item.key);
+                    setIsOpen(false);
+                  }}
                 >
                   {item.label}
                 </div>
