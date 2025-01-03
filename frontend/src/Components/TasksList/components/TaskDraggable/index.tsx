@@ -4,9 +4,9 @@ import TaskCard from "../TaskCard";
 
 type Props = {
   task: Task;
-  index: number;
   onDeletePressed: (id: number) => void;
   boardId: number;
+  index: number;
 };
 
 const TaskDraggable = ({ task, index, onDeletePressed, boardId }: Props) => {
@@ -14,7 +14,7 @@ const TaskDraggable = ({ task, index, onDeletePressed, boardId }: Props) => {
     <Draggable
       key={task.id.toString()}
       draggableId={task.id.toString()}
-      index={task.order}
+      index={index}
     >
       {(provided, snapshot) => (
         <div
@@ -32,6 +32,7 @@ const TaskDraggable = ({ task, index, onDeletePressed, boardId }: Props) => {
             isDragging={snapshot.isDragging}
             id={task.id}
             onDeletePressed={onDeletePressed}
+            onEditTaskContent={() => {}}
           />
         </div>
       )}

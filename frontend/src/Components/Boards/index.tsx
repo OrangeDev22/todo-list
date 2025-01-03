@@ -17,10 +17,10 @@ import {
   handleDragEnd,
 } from "./utils";
 import NewBoardCard from "../NewBoardCard";
-import { useBoards } from "../../hooks/useBoards";
 import Board from "./components/Board";
 import { deleteTask } from "../../utils/tasksUtils";
 import useScroll from "../../hooks/useScroll";
+import { useBoards } from "../../providers/BoardContext";
 
 const Boards = () => {
   const { boards, loading, originalBoards, setBoards } = useBoards();
@@ -40,6 +40,21 @@ const Boards = () => {
     setSelectedGroup(null);
   };
 
+  const editTask = (newContent: string, taskId: number, boardId: number) => {
+    setBoards((prevBoards) =>
+      prevBoards.map((board) =>
+        board.id === boardId
+          ? {
+              ...board,
+              tasks: board.tasks.map((task) =>
+                task.id === taskId ? { ...task, content: newContent } : task
+              ),
+            }
+          : board
+      )
+    );
+  };
+
   const removeBoard = (id: number) => {
     setBoards((prevBoards) =>
       prevBoards.filter((prevBoard) => prevBoard.id !== id)
@@ -56,11 +71,21 @@ const Boards = () => {
     }
   };
 
-  const editBoard = (newName: string, id: number) => {
-    const updatedBoards = boards.map((board) =>
-      board.id === id ? { ...board, name: newName } : board
-    );
-    setBoards(updatedBoards); // Update the state with the new array
+  const editBoard = async (newName: string, id: number) => {
+    try {
+      const response = await axiosInstance.patch(`boards/${id}`, {
+        name: newName,
+      });
+
+      if (response.data.record) {
+        const updatedBoards = boards.map((board) =>
+          board.id === id ? { ...board, name: newName } : board
+        );
+        setBoards(updatedBoards);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   if (loading) return <div>Loading...</div>;
@@ -103,6 +128,9 @@ const Boards = () => {
                     onSelectGroup={setSelectedGroup}
                     onDeleteTask={(taski) =>
                       deleteTask(board.id, taski, boards, setBoards)
+                    }
+                    onEditTaskContent={(newContent, taskId) =>
+                      editTask(newContent, taskId, board.id)
                     }
                     onOpenMenu={() => setSelectedBoardOptions(board.id)}
                     isMenuOpen={board.id === selectedBoardOptions}

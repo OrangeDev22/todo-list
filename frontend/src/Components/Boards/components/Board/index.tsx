@@ -2,13 +2,12 @@ import { Draggable } from "react-beautiful-dnd";
 import { BoardType, Task } from "../../../../types";
 import TasksList from "../../../TasksList";
 import NewTaskCard from "../../../NewTaskCard";
-import { Menu, MenuButton, MenuItem } from "@szhsin/react-menu";
 import { EllipsisHorizontalIcon } from "@heroicons/react/24/solid";
 import { BoardMenuActions, BoardMenuOptions } from "../../utils";
 import MenuDropDown from "../../../MenuDropDown";
 import axiosInstance from "../../../../axios";
 import { useState } from "react";
-import EditBoard from "../EditBoard";
+import EditValue from "../../../EditValue";
 
 interface Props {
   board: BoardType;
@@ -16,6 +15,7 @@ interface Props {
   onSelectGroup: (boardId: number | null) => void;
   onAddTask: (task: Task, boardId: number) => void;
   onDeleteTask: (taskId: number) => void;
+  onEditTaskContent: (newContent: string, taskId: number) => void;
   onOpenMenu: () => void;
   onDeleteBoard: () => void;
   onEditBoardName: (newName: string) => void;
@@ -84,8 +84,7 @@ const Board = ({
                   {board.name}
                 </h2>
               ) : (
-                <EditBoard
-                  boardId={board.id}
+                <EditValue
                   initialValue={board.name}
                   onComplete={handleNameChange}
                 />

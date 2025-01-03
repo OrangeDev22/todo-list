@@ -1,20 +1,19 @@
 import { useState, useEffect, useRef } from "react";
-import InputField from "../../../InputField";
-import axiosInstance from "../../../../axios";
+import InputField from "../InputField";
+import axiosInstance from "../../axios";
 
 interface Props {
-  boardId: number;
   onComplete: (newName: string) => void;
   initialValue: string;
 }
 
-const EditBoard = ({ onComplete, initialValue, boardId }: Props) => {
-  const [name, setName] = useState(initialValue);
+const EditValue = ({ onComplete, initialValue }: Props) => {
+  const [value, setValue] = useState(initialValue);
   const formRef = useRef<HTMLFormElement>(null);
 
   const handleClickOutside = (event: MouseEvent) => {
     if (formRef.current && !formRef.current.contains(event.target as Node)) {
-      setName(initialValue);
+      setValue(initialValue);
       onComplete(initialValue);
     }
   };
@@ -32,30 +31,31 @@ const EditBoard = ({ onComplete, initialValue, boardId }: Props) => {
       onMouseDown={(e) => e.stopPropagation()}
       onSubmit={async (e) => {
         e.preventDefault();
-        if (!name || name === initialValue) return onComplete(initialValue);
+        if (!value || value === initialValue) return onComplete(initialValue);
 
-        try {
-          onComplete(name);
-          const response = await axiosInstance.patch(`boards/${boardId}`, {
-            name,
-          });
+        onComplete(value);
+        // try {
+        //   onComplete(value);
+        //   const response = await axiosInstance.patch(`boards/${boardId}`, {
+        //     value,
+        //   });
 
-          if (response.data.record) onComplete(response.data.record.name);
-        } catch (error) {
-          console.error("--error", error);
-          onComplete(initialValue);
-        }
+        //   if (response.data.record) onComplete(response.data.record.value);
+        // } catch (error) {
+        //   console.error("--error", error);
+        //   onComplete(initialValue);
+        // }
       }}
     >
       <InputField
-        value={name}
+        value={value}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          setName(e.target.value)
+          setValue(e.target.value)
         }
-        placeholder="Please Type the name of the board"
+        placeholder="Please Type the value of the board"
       />
     </form>
   );
 };
 
-export default EditBoard;
+export default EditValue;

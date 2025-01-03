@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { State } from "../../state";
 import { useNavigate } from "react-router";
 import Boards from "../../Components/Boards";
+import BoardsProvider from "../../providers/BoardContext";
 
 function HomePage() {
   const user = useSelector((state: State) => state.user);
@@ -15,7 +16,9 @@ function HomePage() {
   return (
     <div className="bg-gradient-to-r from-indigo-800 to-violet-500 h-[calc(100vh-56px)]">
       {/* <DashBoard initialTaskGroups={tasksGroupFromDb} /> */}
-      <Boards />
+      <BoardsProvider>
+        <Boards />
+      </BoardsProvider>
     </div>
   );
 }
