@@ -3,7 +3,7 @@ import { BoardType } from "../../../../types";
 import TasksList from "../../../TasksList";
 import NewTaskCard from "../../../NewTaskCard";
 import { EllipsisHorizontalIcon } from "@heroicons/react/24/solid";
-import { BoardMenuActions, BoardMenuOptions } from "../../utils";
+import { BoardMenuActions, boardMenuOptions } from "../../utils";
 import MenuDropDown from "../../../MenuDropDown";
 import axiosInstance from "../../../../axios";
 import { useState } from "react";
@@ -47,12 +47,17 @@ const Board = ({ board }: Props) => {
   const handleBoardAction = async (key: string) => {
     switch (key) {
       case BoardMenuActions.DELETE_BOARD:
-        const response = await axiosInstance.delete(`/boards/${board.id}`);
+        try {
+          const response = await axiosInstance.delete(`/boards/${board.id}`);
 
-        if (response.data.record) {
-          removeBoard(board.id);
+          if (response.data.record) {
+            removeBoard(board.id);
+          }
+        } catch (error) {
+          console.error(error);
+        } finally {
+          break;
         }
-        break;
       case BoardMenuActions.ADD_TASK:
         setSelectedBoard(board.id);
         break;
@@ -94,7 +99,7 @@ const Board = ({ board }: Props) => {
                 />
               )}
               <MenuDropDown
-                items={BoardMenuOptions}
+                items={boardMenuOptions}
                 position="right"
                 menuClassName="bg-[#323940] shadow-md rounded-md text-sm"
                 listClassName="py-0"

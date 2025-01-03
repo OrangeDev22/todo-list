@@ -8,7 +8,7 @@ export enum BoardMenuActions {
   ADD_TASK = "add_task",
 }
 
-export const BoardMenuOptions = [
+export const boardMenuOptions = [
   { key: BoardMenuActions.DELETE_BOARD, label: "Delete" },
   { key: BoardMenuActions.ADD_TASK, label: "Add Task" },
 ];
