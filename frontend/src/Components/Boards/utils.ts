@@ -1,7 +1,13 @@
 import { differenceWith, flatMap, isEqual } from "lodash";
-import { DraggableLocation, DropResult } from "react-beautiful-dnd";
+import { DropResult } from "react-beautiful-dnd";
 import { BoardType, Task } from "../../types";
 import axiosInstance from "../../axios";
+
+export const BoardMenuOptions = [
+  { key: "edit_board", label: "Edit" },
+  { key: "delete_board", label: "Delete" },
+  { key: "add_task", label: "Add Task" },
+];
 
 export const getChangedBoards = (
   boards: BoardType[],

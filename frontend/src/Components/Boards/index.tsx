@@ -25,6 +25,9 @@ import useScroll from "../../hooks/useScroll";
 const Boards = () => {
   const { boards, loading, originalBoards, setBoards } = useBoards();
   const [selectedGroup, setSelectedGroup] = useState<number | null>(null);
+  const [selectedBoardOptions, setSelectedBoardOptions] = useState<
+    number | null
+  >(null);
   const {
     isScrollbarVisible,
     scrollContainer,
@@ -88,6 +91,8 @@ const Boards = () => {
                     onDeleteTask={(taski) =>
                       deleteTask(board.id, taski, boards, setBoards)
                     }
+                    onOpenMenu={() => setSelectedBoardOptions(board.id)}
+                    isMenuOpen={board.id === selectedBoardOptions}
                     selectedGroup={selectedGroup}
                   />
                 );

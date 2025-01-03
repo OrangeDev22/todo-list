@@ -2,7 +2,10 @@ import { Draggable } from "react-beautiful-dnd";
 import { BoardType, Task } from "../../../../types";
 import TasksList from "../../../TasksList";
 import NewTaskCard from "../../../NewTaskCard";
-import { deleteTask } from "../../../../utils/tasksUtils";
+import { Menu, MenuButton, MenuItem } from "@szhsin/react-menu";
+import { EllipsisHorizontalIcon } from "@heroicons/react/24/solid";
+import { BoardMenuOptions } from "../../utils";
+import MenuDropDown from "../../../MenuDropDown";
 
 interface Props {
   board: BoardType;
@@ -10,6 +13,8 @@ interface Props {
   onSelectGroup: (boardId: number | null) => void;
   onAddTask: (task: Task, boardId: number) => void;
   onDeleteTask: (taskId: number) => void;
+  onOpenMenu: () => void;
+  isMenuOpen: boolean;
 }
 
 const Board = ({
@@ -37,7 +42,21 @@ const Board = ({
               ...provided.draggableProps.style,
             }}
           >
-            <h2 className="mx-2 mt-2">{board.name}</h2>
+            <div className="flex justify-between items-center mx-2 mt-2">
+              <h2 className="font-semibold">{board.name}</h2>
+              <MenuDropDown
+                items={BoardMenuOptions}
+                position="right"
+                menuClassName="bg-[#323940] shadow-md rounded-md text-sm"
+                listClassName="py-0"
+                itemMenuClassName="!text-gray-300 px-3 hover:bg-neutral-700 mb-2"
+                headerTitle="Board actions"
+              >
+                <button className="p-1 rounded-md hover:bg-neutral-600">
+                  <EllipsisHorizontalIcon width={20} color="white" />
+                </button>
+              </MenuDropDown>
+            </div>
 
             <TasksList
               tasks={board.tasks}
