@@ -24,7 +24,9 @@ const NewTaskCard = ({
       className="mx-1 space-y-2"
       onSubmit={async (e) => {
         e.preventDefault();
+        if (!content) return;
 
+        setSubmitting(true);
         try {
           const response = await axiosInstance.post("/tasks", {
             boardId,
@@ -56,7 +58,7 @@ const NewTaskCard = ({
         />
       </div>
       <div className="w-full flex">
-        <Button onClick={() => setSubmitting(true)} size="sm" className="!px-3">
+        <Button size="sm" className="!px-3">
           {submitting ? "Loading..." : "Add Task"}
         </Button>
         <button

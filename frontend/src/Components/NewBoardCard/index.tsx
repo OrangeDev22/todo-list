@@ -34,6 +34,9 @@ const NewBoardCard = () => {
       className="mx-1 space-y-2 m-2 bg-neutral-800 rounded-xl min-w-[272px] p-2 text-gray-300"
       onSubmit={async (e) => {
         e.preventDefault();
+        if (!name) return;
+
+        setSubmitting(true);
 
         try {
           const response = await axiosInstance.post("/boards", {
@@ -44,10 +47,11 @@ const NewBoardCard = () => {
             const newBoard = response.data.record;
             addNewBoard(newBoard);
           }
-          setSubmitting(false);
         } catch (error) {
           console.error("--error", error);
+        } finally {
           setSubmitting(false);
+          closeForm();
         }
       }}
     >
@@ -64,7 +68,7 @@ const NewBoardCard = () => {
         />
       </div>
       <div className="w-full flex">
-        <Button onClick={() => setSubmitting(true)} size="sm" className="!px-3">
+        <Button size="sm" className="!px-3">
           {submitting ? "Loading..." : "Add Board"}
         </Button>
         <button

@@ -22,7 +22,6 @@ export const getChangedTasks = (
   boards: BoardType[],
   originalBoards: BoardType[]
 ) => {
-  // Detect tasks with changed order or boardId
   const currentTasks = flatMap(boards, (board) =>
     board.tasks.map((task) => ({
       id: task.id,
