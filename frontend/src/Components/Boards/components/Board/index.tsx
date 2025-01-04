@@ -12,8 +12,6 @@ import { useBoards } from "../../../../providers/BoardsProvider";
 
 interface Props {
   board: BoardType;
-  onOpenMenu: () => void;
-  isMenuOpen: boolean;
   index: number;
 }
 

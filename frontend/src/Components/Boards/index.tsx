@@ -58,14 +58,7 @@ const Boards = () => {
               ref={provided.innerRef}
             >
               {boards.map((board, index) => {
-                return (
-                  <Board
-                    board={board}
-                    onOpenMenu={() => setSelectedBoardOptions(board.id)}
-                    isMenuOpen={board.id === selectedBoardOptions}
-                    index={index}
-                  />
-                );
+                return <Board board={board} index={index} />;
               })}
               {provided.placeholder}
 
