@@ -136,3 +136,25 @@ export const siginController = async (
     next(new Error());
   }
 };
+
+export const logoutController = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
+  try {
+    res.clearCookie("access_token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+
+    res.status(200).json({
+      success: true,
+      msg: "Logged out successfully",
+    });
+  } catch (error) {
+    console.error("--error", error);
+    next(new Error("Failed to log out"));
+  }
+};

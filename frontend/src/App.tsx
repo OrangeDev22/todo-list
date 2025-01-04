@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { bindActionCreators } from "redux";
 import "./App.css";
 import Header from "./Components/Header/index";
 import Homepage from "./pages/HomePage/index";
@@ -11,18 +9,34 @@ import SignupPage from "./pages/SignupPage";
 import { toInteger } from "lodash";
 import axiosInstance from "./axios";
 import { setUser } from "./state/reducers/userSlice";
+import { useSelector } from "react-redux";
+import { ReduxState } from "./state";
 
 function App() {
   const dispatch = useDispatch();
+  const user = useSelector((state: ReduxState) => state.user);
   const [loading, setLoading] = useState(true);
+
+  const logoutUser = async () => {
+    try {
+      const response = await axiosInstance.post("/logout");
+      if (response.status === 200) {
+        dispatch(setUser(null));
+      }
+    } catch (error) {
+      console.error("--error", error);
+    }
+  };
 
   useEffect(() => {
     const tokenExpTime = localStorage.getItem("token_expires_at");
     const currentTime = new Date().getTime();
 
-    if (currentTime > toInteger(tokenExpTime)) {
-      localStorage.removeItem("token_expires_at");
+    if (currentTime > toInteger(tokenExpTime) || !tokenExpTime) {
+      logoutUser();
       dispatch(setUser(null));
+      setLoading(false);
+      return;
     }
 
     axiosInstance
