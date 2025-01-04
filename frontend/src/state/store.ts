@@ -1,17 +1,13 @@
-import { applyMiddleware, legacy_createStore as createStore } from "redux";
-import thunk from "redux-thunk";
-import reducers from "./reducers";
-import { composeWithDevTools } from "redux-devtools-extension";
+import { combineReducers } from "redux";
 import { configureStore } from "@reduxjs/toolkit";
+import userReducer from "./reducers/userSlice";
 
-const composeEnhancers = composeWithDevTools({});
-
-// export const store = createStore(
-//   reducers,
-//   {},
-//   composeEnhancers(applyMiddleware(thunk))
-// );
+const reducers = combineReducers({
+  user: userReducer,
+});
 
 export const store = configureStore({
   reducer: reducers,
 });
+
+export type ReduxState = ReturnType<typeof reducers>;

@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 // import LoginSignup from "../pages/LoginSignup";
 import { Provider } from "react-redux";
-import { store } from "../state/index";
+// import { store } from "../state/index";
 
 describe("Login and Signup forms test", () => {
   let container: HTMLElement;

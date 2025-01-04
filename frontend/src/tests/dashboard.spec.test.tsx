@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 // import DashBoard from "../Components/DashBoard";
 import { Provider } from "react-redux";
-import { store } from "../state/index";
+// import { store } from "../state/index";
 // import { defaultGroupsTask } from "../default-data";
 
 describe("DashBoard component test", () => {
@@ -9,12 +9,12 @@ describe("DashBoard component test", () => {
   beforeEach(() => {
     container = document.createElement("div");
     document.body.appendChild(container);
-    render(
-      <Provider store={store}>
-        <></>
-        {/* <DashBoard initialTaskGroups={defaultGroupsTask} /> */}
-      </Provider>
-    );
+    // render(
+    //   <Provider store={store}>
+    //     <></>
+    //     {/* <DashBoard initialTaskGroups={defaultGroupsTask} /> */}
+    //   </Provider>
+    // );
   });
   afterEach(() => {
     document.body.removeChild(container);

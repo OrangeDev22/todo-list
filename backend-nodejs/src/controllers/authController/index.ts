@@ -65,9 +65,11 @@ export const signupController = async (
       sameSite: "strict",
     });
 
-    res
-      .status(201)
-      .json({ success: true, userData: { ...data }, expirationDate });
+    res.status(201).json({
+      success: true,
+      userData: { ...data },
+      expirationDate: expirationDate.getTime(),
+    });
   } catch (error) {
     console.error("--error", error);
     next(new Error());
@@ -127,7 +129,7 @@ export const siginController = async (
     res.status(201).json({
       success: true,
       userData: { ...data },
-      expirationDate,
+      expirationDate: expirationDate.getTime(),
     });
   } catch (error) {
     console.error("--error", error);

@@ -1,6 +1,5 @@
 import { useDispatch } from "react-redux";
 import { bindActionCreators } from "redux";
-import { actionCreators } from "../../state";
 import InputField from "../InputField";
 import Button from "../Button";
 import axios from "../../axios";
@@ -39,7 +38,9 @@ const SiginForm = () => {
         params: { email, password },
       })
       .then((response) => {
-        const { userData } = response.data;
+        const { userData, expirationDate } = response.data;
+
+        localStorage.setItem("token_expires_at", expirationDate);
 
         dispatch(setUser(userData));
         setResponseError("");
