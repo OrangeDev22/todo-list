@@ -129,7 +129,7 @@ export const siginController = async (
     res.status(201).json({
       success: true,
       userData: { ...data },
-      expirationDate: expirationDate.getTime(),
+      expirationDate,
     });
   } catch (error) {
     console.error("--error", error);

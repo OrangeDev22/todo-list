@@ -11,7 +11,6 @@ import SignupPage from "./pages/SignupPage";
 import { toInteger } from "lodash";
 import axiosInstance from "./axios";
 import { setUser } from "./state/reducers/userSlice";
-import { ReduxState } from "./state/store";
 
 function App() {
   const dispatch = useDispatch();
@@ -41,7 +40,6 @@ function App() {
     <div className="flex flex-col min-h-full">
       <Header />
       <main className="flex-grow flex flex-col">
-        {/* {user ? <Homepage /> : <LoginSignup />} */}
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Homepage />} />
