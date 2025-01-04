@@ -4,6 +4,7 @@ import NewBoardCard from "../NewBoardCard";
 import Board from "./components/Board";
 import useScroll from "../../hooks/useScroll";
 import { useBoards } from "../../providers/BoardsProvider";
+import Loading from "../Loading";
 
 const Boards = () => {
   const { boards, loading, originalBoards, setBoards } = useBoards();
@@ -21,7 +22,12 @@ const Boards = () => {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading)
+    return (
+      <div className="mx-auto flex items-center justify-center">
+        <Loading />
+      </div>
+    );
 
   return (
     <div

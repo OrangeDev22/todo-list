@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import "./App.css";
 import Header from "./Components/Header/index";
@@ -9,12 +9,10 @@ import SignupPage from "./pages/SignupPage";
 import { toInteger } from "lodash";
 import axiosInstance from "./axios";
 import { setUser } from "./state/reducers/userSlice";
-import { useSelector } from "react-redux";
-import { ReduxState } from "./state";
+import Loading from "./Components/Loading";
 
 function App() {
   const dispatch = useDispatch();
-  const user = useSelector((state: ReduxState) => state.user);
   const [loading, setLoading] = useState(true);
 
   const logoutUser = async () => {
@@ -48,7 +46,12 @@ function App() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading)
+    return (
+      <div className="mx-auto flex items-center justify-center">
+        <Loading />
+      </div>
+    );
 
   return (
     <div className="flex flex-col min-h-full">

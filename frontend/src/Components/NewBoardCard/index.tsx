@@ -68,7 +68,7 @@ const NewBoardCard = () => {
         />
       </div>
       <div className="w-full flex">
-        <Button size="sm" className="!px-3">
+        <Button size="sm" className="!px-3" disabled={submitting}>
           {submitting ? "Loading..." : "Add Board"}
         </Button>
         <button

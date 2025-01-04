@@ -78,7 +78,7 @@ const SignupForm = () => {
 
       {responseError && <div className="text-red-600">{responseError}</div>}
 
-      <Button fulLWidth data-testid="button-signup">
+      <Button fulLWidth data-testid="button-signup" disabled={isSubmitting}>
         {isSubmitting ? "Loading..." : "Continue"}
       </Button>
 
