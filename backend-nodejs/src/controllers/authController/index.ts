@@ -55,6 +55,9 @@ export const signupController = async (
     };
 
     const accessToken = generateToken(data);
+    const expirationDate = new Date();
+    expirationDate.setHours(expirationDate.getHours() + 24);
+
     res.cookie("access_token", accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -62,7 +65,9 @@ export const signupController = async (
       sameSite: "strict",
     });
 
-    res.status(201).json({ success: true, userData: { ...data } });
+    res
+      .status(201)
+      .json({ success: true, userData: { ...data }, expirationDate });
   } catch (error) {
     console.error("--error", error);
     next(new Error());
@@ -107,6 +112,9 @@ export const siginController = async (
       username: user.username,
     };
 
+    const expirationDate = new Date();
+    expirationDate.setHours(expirationDate.getHours() + 24);
+
     const accessToken = generateToken(data);
 
     res.cookie("access_token", accessToken, {
@@ -116,7 +124,11 @@ export const siginController = async (
       sameSite: "strict",
     });
 
-    res.status(201).json({ success: true, userData: { ...data } });
+    res.status(201).json({
+      success: true,
+      userData: { ...data },
+      expirationDate,
+    });
   } catch (error) {
     console.error("--error", error);
     next(new Error());

@@ -1,9 +1,9 @@
 import { ActionType } from "../action-types";
-import { Account } from "../reducers/accountReducer";
+import { User } from "../reducers/userSlice";
 
-interface LoginAction {
+interface SetUserAction {
   type: ActionType.SET_USER;
-  payload: Account;
+  payload: User;
 }
 
 interface LogoutAction {
@@ -11,4 +11,4 @@ interface LogoutAction {
   payload: null;
 }
 
-export type Action = LoginAction | LogoutAction;
+export type Action = SetUserAction | LogoutAction;

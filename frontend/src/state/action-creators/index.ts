@@ -1,9 +1,9 @@
 import { ActionType } from "../action-types";
-import { Account } from "../reducers/accountReducer";
+import { User } from "../reducers/userSlice";
 import { Dispatch } from "redux";
 import { Action } from "../actions";
 
-export const setUser = (user: Account) => {
+export const setUser = (user: User) => {
   return (dispatch: Dispatch<Action>) => {
     dispatch({
       type: ActionType.SET_USER,

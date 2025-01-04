@@ -4,7 +4,6 @@ import { useDispatch } from "react-redux";
 import { bindActionCreators } from "redux";
 import "./App.css";
 import Header from "./Components/Header/index";
-import LoginSignup from "./pages/LoginSignup/index";
 import Homepage from "./pages/HomePage/index";
 import { actionCreators, State } from "./state";
 import { BrowserRouter, Route, Routes } from "react-router";

@@ -10,6 +10,7 @@ import { loginFormSchema } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
+import { setUser } from "../../state/reducers/userSlice";
 
 type LoginFormData = z.infer<typeof loginFormSchema>;
 
@@ -28,7 +29,6 @@ const SiginForm = () => {
     },
   });
   const navigate = useNavigate();
-  const { setUser } = bindActionCreators(actionCreators, dispatch);
   const [responseError, setResponseError] = useState("");
 
   const onSubmit = async (data: LoginFormData) => {
@@ -41,7 +41,7 @@ const SiginForm = () => {
       .then((response) => {
         const { userData } = response.data;
 
-        setUser(userData);
+        dispatch(setUser(userData));
         setResponseError("");
         navigate("/");
       })

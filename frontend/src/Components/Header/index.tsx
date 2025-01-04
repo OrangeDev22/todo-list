@@ -10,10 +10,11 @@ function Header() {
   const dispatch = useDispatch();
   const { logout } = bindActionCreators(actionCreators, dispatch);
 
+  console.log("--user", user);
   return (
     <header className="p-4 bg-gray-900 flex">
       <div className="font-bold">{user?.username || "Todo List"}</div>
-      {user && (
+      {user?.email && (
         <div className="flex items*center ml-auto gap-3">
           <button onClick={() => logout()}>Log out</button>
           <button
@@ -22,11 +23,7 @@ function Header() {
               if (
                 window.confirm("Are you sure you want to delete your account")
               ) {
-                await axios
-                  .delete("/users", {
-                    headers: { Authorization: `Bearer ${user.token}` },
-                  })
-                  .then(() => logout());
+                await axios.delete("/users", {}).then(() => logout());
               }
             }}
           >

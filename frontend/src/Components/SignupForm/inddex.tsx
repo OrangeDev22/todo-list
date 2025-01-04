@@ -10,6 +10,7 @@ import axios from "../../axios";
 import InputField from "../InputField";
 import Button from "../Button";
 import { Link, useNavigate } from "react-router";
+import { setUser } from "../../state/reducers/userSlice";
 
 type SignupFormData = z.infer<typeof signupFormSchema>;
 
@@ -17,7 +18,6 @@ const SignupForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { setUser } = bindActionCreators(actionCreators, dispatch);
   const [responseError, setResponseError] = useState("");
   const {
     register,
@@ -38,7 +38,7 @@ const SignupForm = () => {
       })
       .then((response) => {
         const { userData } = response.data;
-        setUser(userData);
+        dispatch(setUser(userData));
         navigate("/");
       })
       .catch((e) => {
