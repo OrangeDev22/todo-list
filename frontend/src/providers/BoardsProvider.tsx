@@ -61,6 +61,7 @@ const BoardsProvider = ({ children }: Props) => {
   }, []);
 
   const addNewBoard = (newBoard: BoardType) => {
+    sessionStorage.setItem("new_board", newBoard.id.toString());
     setBoards([...boards, newBoard]);
   };
 

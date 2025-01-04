@@ -11,7 +11,7 @@ type Props = {
 const TasksList = ({ tasks, originBoardId }: Props) => {
   return (
     <div
-      className="flex-grow overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 rounded-md"
+      className="flex-grow overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 rounded-md"
       style={{
         maxHeight: `calc(100vh - 220px)`,
       }}
@@ -20,7 +20,7 @@ const TasksList = ({ tasks, originBoardId }: Props) => {
         {(provided, snapshot) => (
           <div
             className={twMerge(
-              "space-y-2 min-h-1 rounded-lg",
+              "min-h-1 rounded-lg",
               snapshot.isDraggingOver && "bg-neutral-600"
             )}
             {...provided.droppableProps}

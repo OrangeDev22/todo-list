@@ -9,6 +9,7 @@ import axiosInstance from "../../../../axios";
 import { useState } from "react";
 import EditValue from "../../../EditValue";
 import { useBoards } from "../../../../providers/BoardsProvider";
+import { twMerge } from "tailwind-merge";
 
 interface Props {
   board: BoardType;
@@ -24,6 +25,7 @@ const Board = ({ board, index }: Props) => {
     setSelectedBoard,
   } = useBoards();
   const [isEditing, setIsEditing] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleNameChange = async (newName: string) => {
     if (newName !== board.name) {
@@ -99,14 +101,20 @@ const Board = ({ board, index }: Props) => {
               )}
               <MenuDropDown
                 items={boardMenuOptions}
-                position="right"
+                position="bottom"
                 menuClassName="bg-[#323940] shadow-md rounded-md text-sm"
                 listClassName="py-0"
                 itemMenuClassName="!text-gray-300 px-3 hover:bg-neutral-700 mb-2"
                 headerTitle="Board actions"
                 onActionClicked={handleBoardAction}
+                onChange={(value) => setIsMenuOpen(value)}
               >
-                <button className="p-1 rounded-md hover:bg-neutral-600">
+                <button
+                  className={twMerge(
+                    "p-1 rounded-md hover:bg-neutral-600",
+                    isMenuOpen && "bg-neutral-600"
+                  )}
+                >
                   <EllipsisHorizontalIcon width={20} color="white" />
                 </button>
               </MenuDropDown>
@@ -125,7 +133,7 @@ const Board = ({ board, index }: Props) => {
             )}
 
             <button
-              className="hover:bg-neutral-700 rounded-md"
+              className="hover:bg-neutral-700 rounded-md mt-2"
               onClick={() => setSelectedBoard(board.id)}
             >
               <span className="font-bold mr-2 self-start">+</span>

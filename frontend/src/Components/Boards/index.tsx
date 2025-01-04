@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { BoardType } from "../../types";
 import { handleDragEnd } from "./utils";
@@ -25,6 +25,7 @@ const Boards = () => {
     }
   };
 
+  console.log("--boards", boards);
   if (loading) return <div>Loading...</div>;
 
   return (
@@ -58,7 +59,11 @@ const Boards = () => {
               ref={provided.innerRef}
             >
               {boards.map((board, index) => {
-                return <Board board={board} index={index} />;
+                return (
+                  <Fragment key={board.id}>
+                    <Board board={board} index={index} />
+                  </Fragment>
+                );
               })}
               {provided.placeholder}
 

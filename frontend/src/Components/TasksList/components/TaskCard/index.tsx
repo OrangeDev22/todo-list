@@ -17,6 +17,7 @@ const TaskCard = ({
   onEditTaskContent: (newValue: string) => void;
 }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleContentChange = (newValue: string) => {
     if (newValue !== content) onEditTaskContent(newValue);
@@ -40,7 +41,7 @@ const TaskCard = ({
   return (
     <div
       className={twMerge(
-        "p-2 shadow-lg rounded-lg break-words relative max-w-[248px]",
+        "p-2 shadow-lg rounded-lg break-words relative max-w-[272px]",
         isDragging ? "bg-indigo-700" : "bg-indigo-500"
       )}
     >
@@ -58,8 +59,15 @@ const TaskCard = ({
             itemMenuClassName="!text-gray-300 px-3 hover:bg-neutral-700 mb-2"
             headerTitle="Board actions"
             onActionClicked={handleBoardAction}
+            positionOffset={14}
+            onChange={(value) => setIsMenuOpen(value)}
           >
-            <button className="p-1 rounded-md hover:bg-neutral-600">
+            <button
+              className={twMerge(
+                "p-1 rounded-md hover:bg-neutral-600",
+                isMenuOpen && "bg-neutral-600"
+              )}
+            >
               <EllipsisHorizontalIcon width={20} color="white" />
             </button>
           </MenuDropDown>

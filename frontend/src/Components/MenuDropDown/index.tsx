@@ -1,4 +1,3 @@
-"use client";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import React, { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
@@ -14,7 +13,9 @@ type Props = {
   itemMenuClassName?: string;
   listClassName?: string;
   position?: Position;
+  positionOffset?: number;
   onActionClicked: (key: string) => void;
+  onChange?: (value: boolean) => void;
 };
 
 function MenuDropDown({
@@ -25,7 +26,9 @@ function MenuDropDown({
   listClassName,
   headerTitle,
   position = "bottom",
+  positionOffset = 4,
   onActionClicked,
+  onChange,
 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [anchorRect, setAnchorRect] = useState<DOMRect | null>(null);
@@ -35,6 +38,7 @@ function MenuDropDown({
   const handleToggleDropdown = () => {
     setAnchorRect(anchorRef.current?.getBoundingClientRect() || null);
     setIsOpen((prev) => !prev);
+    onChange && onChange(!isOpen);
   };
 
   const handleClickOutside = (event: MouseEvent) => {
@@ -45,6 +49,7 @@ function MenuDropDown({
       !anchorRef.current.contains(event.target as Node)
     ) {
       setIsOpen(false);
+      onChange && onChange(false);
     }
   };
 
@@ -61,22 +66,22 @@ function MenuDropDown({
 
     switch (position) {
       case "top":
-        styles.top = `${anchorRect.top - 8}px`;
+        styles.top = `${anchorRect.top - positionOffset}px`;
         styles.left = `${anchorRect.left}px`;
         styles.transform = "translateY(-100%)";
         break;
       case "bottom":
-        styles.top = `${anchorRect.bottom + 8}px`;
+        styles.top = `${anchorRect.bottom + positionOffset}px`;
         styles.left = `${anchorRect.left}px`;
         break;
       case "left":
         styles.top = `${anchorRect.top}px`;
-        styles.left = `${anchorRect.left - 8}px`;
+        styles.left = `${anchorRect.left - positionOffset}px`;
         styles.transform = "translateX(-100%)";
         break;
       case "right":
         styles.top = `${anchorRect.top}px`;
-        styles.left = `${anchorRect.right + 8}px`;
+        styles.left = `${anchorRect.right + positionOffset}px`;
         break;
       default:
         break;
