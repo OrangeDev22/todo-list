@@ -1,5 +1,5 @@
 import React from "react";
-import cc from "classcat";
+import { twMerge } from "tailwind-merge";
 
 type Props = {
   children: React.ReactNode;
@@ -16,12 +16,10 @@ const Container = ({
 }: Props) => {
   return (
     <div
-      className={cc([
+      className={twMerge([
         "w-full max-w-4xl  lg:max-w-5xl xl:max-w-6xl mx-auto md:max-w-7xl",
-        {
-          "py-5": topAndBottom,
-          "px-4": leftAndRight,
-        },
+        topAndBottom && "py-5",
+        leftAndRight && "px-4",
         className,
       ])}
     >
