@@ -1,12 +1,11 @@
-import cc from "classcat";
 import { AnchorHTMLAttributes, ButtonHTMLAttributes } from "react";
 import { Link } from "react-router-dom";
+import { twMerge } from "tailwind-merge";
 
 type Props = {
   children: any;
   size: "sm" | "md";
-  $fluid?: boolean;
-  $inverted?: boolean;
+  fulLWidth?: boolean;
 } & (
   | ({
       to: string;
@@ -14,17 +13,19 @@ type Props = {
   | ButtonHTMLAttributes<HTMLButtonElement>
 );
 
-const Button = ({ size, $fluid, $inverted, ...props }: Props) => {
-  const className = cc([
-    "rounded-md text-center bg-indigo-500 text-white active:bg-opacity-90",
-    {
-      "px-3 py-2 text-md": size === "md",
-      "px-2 py-1 text-sm h-10": size === "sm",
-      "w-full": $fluid,
-    },
-    props.className,
-  ]);
+const Button = ({ size, fulLWidth, ...props }: Props) => {
+  const sizeStyles = {
+    sm: "px-3 py-1 text-sm",
+    md: "px-4 py-2 text-base",
+    lg: "px-6 py-3 text-lg",
+  };
 
+  const className = twMerge(
+    "rounded-md text-center bg-indigo-500 text-white active:bg-opacity-90",
+    sizeStyles[size],
+    fulLWidth ? "w-full" : null,
+    props.className
+  );
   if ("to" in props) {
     return <Link {...props} className={className} />;
   } else {

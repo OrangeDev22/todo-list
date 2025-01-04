@@ -72,7 +72,7 @@ const SiginForm = () => {
       </div>
       {responseError && <div className="text-red-600">{responseError}</div>}
 
-      <Button $fluid data-testid="button-sigin">
+      <Button fulLWidth data-testid="button-sigin">
         {isSubmitting ? "Loading..." : "Login"}
       </Button>
 

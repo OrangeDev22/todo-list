@@ -1,14 +1,7 @@
-import { BoardType, Task } from "../../types";
-import {
-  DragDropContext,
-  Draggable,
-  Droppable,
-  DropResult,
-} from "react-beautiful-dnd";
-import cc from "classcat";
-import TaskCard from "./components/TaskCard";
+import { Task } from "../../types";
+import { Droppable } from "react-beautiful-dnd";
 import TaskDraggable from "./components/TaskDraggable";
-import { useBoards } from "../../providers/BoardsProvider";
+import { twMerge } from "tailwind-merge";
 
 type Props = {
   tasks: Task[];
@@ -26,10 +19,10 @@ const TasksList = ({ tasks, originBoardId }: Props) => {
       <Droppable droppableId={originBoardId.toString()} type="TASK">
         {(provided, snapshot) => (
           <div
-            className={cc([
+            className={twMerge(
               "space-y-2 min-h-1 rounded-lg",
-              { "bg-neutral-600": snapshot.isDraggingOver },
-            ])}
+              snapshot.isDraggingOver && "bg-neutral-600"
+            )}
             {...provided.droppableProps}
             ref={provided.innerRef}
             data-testid={`group-task-${originBoardId}`}

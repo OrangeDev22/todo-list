@@ -3,7 +3,7 @@ import React, {
   forwardRef,
   InputHTMLAttributes,
 } from "react";
-import cc from "classcat";
+import { twMerge } from "tailwind-merge";
 
 type Props =
   | {
@@ -20,14 +20,11 @@ const InputField = forwardRef<any, any>(
       <div className="w-full">
         <input
           data-testid={`input-${nativeAttrs.name || nativeAttrs.id}`}
-          className={cc([
+          className={twMerge(
             "w-full outline-none rounded-md border py-2 px-3 bg-neutral-800 placeholder-gray-600",
-            {
-              "border-gray-600": !isError,
-              "border-red-500": isError,
-            },
-            nativeAttrs.className,
-          ])}
+            !isError ? "border-gray-600" : "border-red-500",
+            nativeAttrs.className
+          )}
           {...nativeAttrs}
           ref={ref}
         />

@@ -1,10 +1,9 @@
 import { useState } from "react";
-import cc from "classcat";
-import { ReactComponent as DeleteIcon } from "../../../../assets/icons/delete.svg";
 import EditValue from "../../../EditValue";
 import MenuDropDown from "../../../MenuDropDown";
 import { TaskMenuActions, taskMenuOptions } from "./utils";
 import { EllipsisHorizontalIcon } from "@heroicons/react/24/solid";
+import { twMerge } from "tailwind-merge";
 
 const TaskCard = ({
   content,
@@ -40,11 +39,10 @@ const TaskCard = ({
 
   return (
     <div
-      className={cc([
+      className={twMerge(
         "p-2 shadow-lg rounded-lg break-words relative max-w-[248px]",
-        { "bg-indigo-700": isDragging },
-        { "bg-indigo-500": !isDragging },
-      ])}
+        isDragging ? "bg-indigo-700" : "bg-indigo-500"
+      )}
     >
       {!isEditing ? (
         <div className="flex justify-between items-center">
