@@ -1,6 +1,4 @@
-import { Fragment, useState } from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
-import { BoardType } from "../../types";
 import { handleDragEnd } from "./utils";
 import NewBoardCard from "../NewBoardCard";
 import Board from "./components/Board";
@@ -9,9 +7,7 @@ import { useBoards } from "../../providers/BoardsProvider";
 
 const Boards = () => {
   const { boards, loading, originalBoards, setBoards } = useBoards();
-  const [selectedBoardOptions, setSelectedBoardOptions] = useState<
-    number | null
-  >(null);
+
   const {
     isScrollbarVisible,
     scrollContainer,
@@ -25,7 +21,6 @@ const Boards = () => {
     }
   };
 
-  console.log("--boards", boards);
   if (loading) return <div>Loading...</div>;
 
   return (
@@ -54,15 +49,17 @@ const Boards = () => {
         <Droppable droppableId="board" type="BOARD" direction="horizontal">
           {(provided) => (
             <div
-              className="flex items-start h-full w-full "
+              className="inline-flex items-start"
               {...provided.droppableProps}
               ref={provided.innerRef}
             >
               {boards.map((board, index) => {
                 return (
-                  <Fragment key={board.id}>
-                    <Board board={board} index={index} />
-                  </Fragment>
+                  <Board
+                    key={`droppable-board-${board.id}`}
+                    board={board}
+                    index={index}
+                  />
                 );
               })}
               {provided.placeholder}

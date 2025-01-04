@@ -4,7 +4,6 @@ import { useNavigate } from "react-router";
 import Boards from "../../Components/Boards";
 import BoardsProvider from "../../providers/BoardsProvider";
 import { ReduxState } from "../../state/store";
-import { motion } from "motion/react";
 
 function HomePage() {
   const user = useSelector((state: ReduxState) => state.user);
