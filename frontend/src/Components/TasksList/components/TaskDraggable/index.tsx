@@ -54,7 +54,6 @@ const TaskDraggable = ({ task, index, boardId }: Props) => {
             ...provided.draggableProps.style,
           }}
           data-testid={`task-${task.id}`}
-          className="my-3"
         >
           <TaskCard
             content={task.content}

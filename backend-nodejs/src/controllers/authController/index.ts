@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import prisma from "../../prisma/prismaClient";
 import { generateToken } from "../../utils/jwtUtils";
 
+const isProduction = process.env.NODE_ENV === "production";
 const TOKEN_MAX_LIFE = 24 * 60 * 60 * 1000;
 
 export const signupController = async (
@@ -62,7 +63,7 @@ export const signupController = async (
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: TOKEN_MAX_LIFE,
-      sameSite: "none",
+      sameSite: "lax",
     });
 
     res.status(201).json({
@@ -123,7 +124,7 @@ export const siginController = async (
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: TOKEN_MAX_LIFE,
-      sameSite: "none",
+      sameSite: "lax",
     });
 
     res.status(201).json({

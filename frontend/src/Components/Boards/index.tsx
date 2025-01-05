@@ -55,7 +55,7 @@ const Boards = () => {
         <Droppable droppableId="board" type="BOARD" direction="horizontal">
           {(provided) => (
             <div
-              className="inline-flex items-start"
+              className="inline-flex items-start min-h-lvh"
               {...provided.droppableProps}
               ref={provided.innerRef}
             >

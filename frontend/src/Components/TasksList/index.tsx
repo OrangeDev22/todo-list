@@ -10,32 +10,34 @@ type Props = {
 
 const TasksList = ({ tasks, originBoardId }: Props) => {
   return (
-    <div
-      className="flex-grow overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 rounded-md"
-      style={{
-        maxHeight: `calc(100vh - 220px)`,
-      }}
-    >
+    <div className="rounded-md">
       <Droppable droppableId={originBoardId.toString()} type="TASK">
         {(provided, snapshot) => (
           <div
             className={twMerge(
-              "min-h-1 rounded-lg",
+              "min-h-1 rounded-lg h-full",
               snapshot.isDraggingOver && "bg-neutral-600"
             )}
             {...provided.droppableProps}
             ref={provided.innerRef}
             data-testid={`group-task-${originBoardId}`}
           >
-            {tasks.map((task, index) => (
-              <TaskDraggable
-                boardId={originBoardId}
-                index={index}
-                task={task}
-                key={task.id}
-              />
-            ))}
-            {provided.placeholder}
+            <div
+              className="overflow-y-auto overflow-x-hidden flex flex-col gap-2"
+              style={{
+                maxHeight: `calc(100vh - 220px)`,
+              }}
+            >
+              {tasks.map((task, index) => (
+                <TaskDraggable
+                  boardId={originBoardId}
+                  index={index}
+                  task={task}
+                  key={task.id}
+                />
+              ))}
+              {provided.placeholder}
+            </div>
           </div>
         )}
       </Droppable>

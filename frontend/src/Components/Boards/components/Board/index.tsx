@@ -76,7 +76,7 @@ const Board = ({ board, index }: Props) => {
       {(provided) => {
         return (
           <div
-            className="m-2 bg-neutral-800 rounded-xl overflow-hidden min-w-[272px] flex flex-col p-2 text-gray-300 "
+            className="m-2 bg-neutral-800 rounded-xl min-w-[272px] flex flex-col gap-2 p-2 text-gray-300 "
             key={board.id}
             ref={provided.innerRef}
             {...provided.draggableProps}
@@ -132,13 +132,15 @@ const Board = ({ board, index }: Props) => {
               />
             )}
 
-            <button
-              className="hover:bg-neutral-700 rounded-md mt-2"
-              onClick={() => setSelectedBoard(board.id)}
-            >
-              <span className="font-bold mr-2 self-start">+</span>
-              Add a Task
-            </button>
+            {selectedBoard !== board.id && (
+              <button
+                className="hover:bg-neutral-700 rounded-md mt-2"
+                onClick={() => setSelectedBoard(board.id)}
+              >
+                <span className="font-bold mr-2 self-start">+</span>
+                Add a Task
+              </button>
+            )}
           </div>
         );
       }}

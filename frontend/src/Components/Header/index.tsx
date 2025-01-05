@@ -10,8 +10,8 @@ function Header() {
   const dispatch = useDispatch();
 
   const handleRemoveUser = () => {
-    dispatch(setUser(null));
     localStorage.removeItem("token_expires_at");
+    dispatch(setUser(null));
   };
 
   const handleLogoutUser = async () => {
