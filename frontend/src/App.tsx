@@ -28,9 +28,12 @@ function App() {
 
   useEffect(() => {
     const tokenExpTime = localStorage.getItem("token_expires_at");
+    // const expDate = new Date(tokenExpTime)
     const currentTime = new Date().getTime();
-
+    console.log("--token expire time", tokenExpTime);
+    console.log("current time", currentTime);
     if (currentTime > toInteger(tokenExpTime) || !tokenExpTime) {
+      console.log("--should not enter");
       tokenExpTime && logoutUser();
       dispatch(setUser(null));
       setLoading(false);
