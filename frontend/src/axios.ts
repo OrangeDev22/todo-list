@@ -6,7 +6,7 @@ import { store } from "./state/store";
 import { setUser } from "./state/reducers/userSlice";
 
 const axiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL,
+  baseURL: process.env.BACKEND_API_URL,
   withCredentials: true,
 });
 
