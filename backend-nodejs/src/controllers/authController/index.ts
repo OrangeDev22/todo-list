@@ -62,7 +62,6 @@ export const signupController = async (
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: TOKEN_MAX_LIFE,
-      sameSite: "strict",
     });
 
     res.status(201).json({
@@ -123,7 +122,6 @@ export const siginController = async (
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: TOKEN_MAX_LIFE,
-      sameSite: "strict",
     });
 
     res.status(201).json({
@@ -146,7 +144,6 @@ export const logoutController = (
     res.clearCookie("access_token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
     });
 
     res.status(200).json({
