@@ -21,7 +21,7 @@ axiosInstance.interceptors.response.use(
     ) {
       store.dispatch(setUser(null));
     }
-    return error;
+    return Promise.reject(error);
   }
 );
 

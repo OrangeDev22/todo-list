@@ -31,11 +31,13 @@ function App() {
     const currentTime = new Date().getTime();
 
     if (currentTime > toInteger(tokenExpTime) || !tokenExpTime) {
-      logoutUser();
+      tokenExpTime && logoutUser();
       dispatch(setUser(null));
       setLoading(false);
       return;
     }
+
+    if (!tokenExpTime) return;
 
     axiosInstance
       .get("/users")
