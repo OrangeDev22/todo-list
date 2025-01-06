@@ -63,7 +63,7 @@ export const signupController = async (
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: TOKEN_MAX_LIFE,
-      sameSite: "lax",
+      sameSite: "none",
     });
 
     res.status(201).json({
@@ -124,7 +124,7 @@ export const siginController = async (
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: TOKEN_MAX_LIFE,
-      sameSite: "lax",
+      sameSite: "none",
     });
 
     res.status(201).json({
