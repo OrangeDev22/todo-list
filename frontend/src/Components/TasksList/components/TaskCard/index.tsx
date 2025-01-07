@@ -47,7 +47,10 @@ const TaskCard = ({
     >
       {!isEditing ? (
         <div className="flex justify-between items-center">
-          <div className="cursor-pointer" onClick={() => setIsEditing(true)}>
+          <div
+            className="cursor-pointer select-none"
+            onClick={() => setIsEditing(true)}
+          >
             {content}
           </div>
 

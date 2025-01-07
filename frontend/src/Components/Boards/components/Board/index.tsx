@@ -88,7 +88,7 @@ const Board = ({ board, index }: Props) => {
             <div className="flex justify-between items-center mx-2 mt-2">
               {!isEditing ? (
                 <h2
-                  className="font-semibold cursor-pointer"
+                  className="font-semibold cursor-pointer select-none"
                   onClick={() => setIsEditing(true)}
                 >
                   {board.name}
@@ -134,7 +134,7 @@ const Board = ({ board, index }: Props) => {
 
             {selectedBoard !== board.id && (
               <button
-                className="hover:bg-neutral-700 rounded-md mt-2"
+                className="hover:bg-neutral-700 rounded-md mt-2 select-none"
                 onClick={() => setSelectedBoard(board.id)}
               >
                 <span className="font-bold mr-2 self-start">+</span>
