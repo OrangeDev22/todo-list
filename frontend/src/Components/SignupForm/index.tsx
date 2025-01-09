@@ -82,13 +82,9 @@ const SignupForm = () => {
         {isSubmitting ? "Loading..." : "Continue"}
       </Button>
 
-      <div className="my-2">
+      <div className="my-2" data-testid="set-signin-screen">
         Have an account?{" "}
-        <Link
-          to="/sigin"
-          className="text-cyan-500 cursor-pointer"
-          data-testid="set-signin-screen"
-        >
+        <Link to="/sigin" className="text-cyan-500 cursor-pointer">
           Sigin Here
         </Link>
       </div>

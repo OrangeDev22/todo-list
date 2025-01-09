@@ -1,11 +1,9 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { Provider } from "react-redux";
-import SiginForm from "../Components/SiginForm";
+import SignupForm from "../Components/SignupForm";
 import { store } from "../state";
-import { TextEncoder, TextDecoder } from "util";
-import SiginPage from "../pages/SiginPage";
+import { TextEncoder } from "util";
 import { BrowserRouter } from "react-router-dom";
-import { json } from "stream/consumers";
 
 global.TextEncoder = TextEncoder;
 // global.TextDecoder = TextDecoder;
@@ -18,7 +16,7 @@ describe("Login and Signup forms test", () => {
     container = render(
       <Provider store={store}>
         <BrowserRouter>
-          <SiginForm />
+          <SignupForm />
         </BrowserRouter>
       </Provider>
     ).container;
@@ -28,27 +26,30 @@ describe("Login and Signup forms test", () => {
     const inputs = container.querySelectorAll("input");
     const labels = container.querySelectorAll("label");
 
-    expect(inputs).toHaveLength(2);
-    expect(labels).toHaveLength(2);
+    expect(inputs).toHaveLength(3);
+    expect(labels).toHaveLength(3);
 
     expect(labels[0].getAttribute("for")).toBe("email");
-    expect(labels[1].getAttribute("for")).toBe("password");
+    expect(labels[1].getAttribute("for")).toBe("username");
+    expect(labels[2].getAttribute("for")).toBe("password");
 
     const emailInput = screen.getByTestId("input-email");
     const passwordInput = screen.getByTestId("input-password");
+    const userNameInput = screen.getByTestId("input-username");
 
     expect(emailInput.getAttribute("name")).toBe("email");
     expect(passwordInput.getAttribute("name")).toBe("password");
+    expect(userNameInput.getAttribute("name")).toBe("username");
 
-    expect(screen.getByTestId("set-signup-screen")).toBeInTheDocument();
+    const signupIn = screen.getByTestId("set-signin-screen");
 
-    const signupUrl = screen.getByTestId("set-signup-screen");
+    expect(signupIn).toBeInTheDocument();
 
-    expect(signupUrl).toBeInTheDocument();
-    expect(signupUrl).toHaveTextContent("Need an account? Register Here");
+    expect(signupIn).toBeInTheDocument();
+    expect(signupIn).toHaveTextContent("Have an account? Sigin Here");
 
-    const loginButton = screen.getByTestId("button-sigin");
-    expect(loginButton).toBeInTheDocument();
-    expect(loginButton).toHaveTextContent("Login");
+    const signupButton = screen.getByTestId("button-signup");
+    expect(signupButton).toBeInTheDocument();
+    expect(signupButton).toHaveTextContent("Continue");
   });
 });
