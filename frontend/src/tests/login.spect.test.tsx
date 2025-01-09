@@ -2,10 +2,9 @@ import { render, screen } from "@testing-library/react";
 import { Provider } from "react-redux";
 import SiginForm from "../Components/SiginForm";
 import { store } from "../state";
-import { TextEncoder } from "util";
 import { BrowserRouter } from "react-router-dom";
 
-describe("Signup and Signup forms test", () => {
+describe("Signin forms test", () => {
   let container: HTMLElement;
   beforeEach(() => {
     container = document.createElement("div");
