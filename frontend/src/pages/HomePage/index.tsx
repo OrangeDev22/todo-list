@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import Boards from "../../Components/Boards";
 import BoardsProvider from "../../providers/BoardsProvider";
 import { ReduxState } from "../../state/store";

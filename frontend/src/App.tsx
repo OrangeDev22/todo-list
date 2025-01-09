@@ -3,13 +3,13 @@ import { useDispatch } from "react-redux";
 import "./App.css";
 import Header from "./Components/Header/index";
 import Homepage from "./pages/HomePage/index";
-import { BrowserRouter, Route, Routes } from "react-router";
 import SiginPage from "./pages/SiginPage";
 import SignupPage from "./pages/SignupPage";
 import { toInteger } from "lodash";
 import axiosInstance from "./axios";
 import { setUser } from "./state/reducers/userSlice";
 import Loading from "./Components/Loading";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 function App() {
   const dispatch = useDispatch();

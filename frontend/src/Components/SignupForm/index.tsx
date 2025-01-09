@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "../../axios";
 import InputField from "../InputField";
 import Button from "../Button";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router-dom";
 import { setUser } from "../../state/reducers/userSlice";
 
 type SignupFormData = z.infer<typeof signupFormSchema>;

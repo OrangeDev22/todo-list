@@ -3,7 +3,7 @@ import SignupForm from "../../Components/SignupForm";
 import withAuthContainer from "../../hoc/withAuthContainer";
 import { useSelector } from "react-redux";
 import { ReduxState } from "../../state/store";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 const SignupPage = () => {
   const user = useSelector((state: ReduxState) => state.user);

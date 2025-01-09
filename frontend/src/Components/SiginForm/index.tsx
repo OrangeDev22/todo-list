@@ -8,7 +8,7 @@ import { z } from "zod";
 import { loginFormSchema } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router-dom";
 import { setUser } from "../../state/reducers/userSlice";
 
 type LoginFormData = z.infer<typeof loginFormSchema>;
@@ -76,13 +76,9 @@ const SiginForm = () => {
         {isSubmitting ? "Loading..." : "Login"}
       </Button>
 
-      <div className="my-2">
+      <div className="my-2" data-testid="set-signup-screen">
         Need an account?{" "}
-        <Link
-          to="/signup"
-          className="text-cyan-500 cursor-pointer"
-          data-testid="set-signin-screen"
-        >
+        <Link to="/signup" className="text-cyan-500 cursor-pointer">
           Register Here
         </Link>
       </div>

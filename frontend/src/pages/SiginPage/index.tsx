@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import SiginForm from "../../Components/SiginForm";
 import withAuthContainer from "../../hoc/withAuthContainer";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { ReduxState } from "../../state/store";
 
