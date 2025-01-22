@@ -1,4 +1,4 @@
-# How Run Locally
+# How Run Locally (Deprecated) Todo: Update this instructions in the future
 
 Make sure you have npm and docker installed in your computer. Open a terminal and navigate to the "backend" folder and open the ".env" file and uncomment these two lines.
 
